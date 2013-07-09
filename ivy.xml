@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivy-module version="2.0">
   <info organisation="com.adaptris" module="adp-tibco" revision="${ivy.publish.revision.final}" status="release"/>
-  
+
   <configurations>
 	  <conf name="default" visibility="public" description="runtime dependencies and master artifact can be used with this conf" extends="runtime,master"/>
 	  <conf name="master" visibility="public" description="contains only the artifact published by this module itself, with no transitive dependencies"/>
@@ -21,12 +21,13 @@
   <dependencies>
   	<dependency org="com.adaptris" name="adp-core" rev="${adp-core-version}" changing="true"/>
   	<dependency org="com.adaptris" name="adp-apt" rev="${adp-core-version}" changing="true"/>
-  	<dependency org="com.adaptris" name="adp-stubs" rev="${adp-core-version}" changing="true"/>
+  	<dependency org="com.adaptris" name="adp-stubs" rev="${adp-core-version}" changing="true" conf="test->default"/>
   	<dependency org="com.tibco" name="tibjms" rev="6.3.0"/>
   	<dependency org="com.tibco" name="tibrv" rev="7.5.1"/>
-  	<dependency org="org.apache.geronimo.specs" name="geronimo-jms_1.1_spec" rev="1.1.1"/>
+  	<dependency org="org.apache.geronimo.specs" name="geronimo-jms_1.1_spec" rev="1.1.1" conf="test->default"/>
   	<dependency org="org.apache.velocity" name="velocity" rev="1.7" transitive="false"/> <!-- Without transitive, all velocities deps will be included, which will break us cos ant 1.6 will also be included. -->
-  	<dependency org="junit" name="junit" rev="4.11"/>
-    <exclude org="commons-logging"/>    
+  	<dependency org="junit" name="junit" rev="4.11" conf="test->default"/>
+  	<dependency org="org.mockito" name="mockito-all" rev="1.9.5" conf="test->default"/>
+    <exclude org="commons-logging"/>
   </dependencies>
 </ivy-module>
