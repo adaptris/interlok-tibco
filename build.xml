@@ -69,6 +69,7 @@
 <!-- clean -->
   <target name="clean" depends="init" description="Remove build artifacts">
     <delete dir="${build.dir}"/>
+    <delete dir="${tests.output.dir}"/>
   </target>
 
   <target name="prepare" depends="init, prepare-ivy">
