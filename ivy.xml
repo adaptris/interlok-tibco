@@ -12,15 +12,15 @@
 	  <conf name="system" visibility="public" description="this scope is similar to provided except that you have to provide the JAR which contains it explicitly. The artifact is always available and is not looked up in a repository."/>
 	  <conf name="sources" visibility="public" description="this configuration contains the source artifact of this module, if any."/>
 	  <conf name="javadoc" visibility="public" description="this configuration contains the javadoc artifact of this module, if any."/>
-  	  <conf name="optional" visibility="public" description="contains all optional dependencies"/>
+  	<conf name="optional" visibility="public" description="contains all optional dependencies"/>   
   </configurations>
   <publications>
      <artifact name="adp-tibco" type="jar" ext="jar"/>
      <artifact name="adp-tibco" type="pom" ext="pom"/>
   </publications>
   <dependencies>
-  	<dependency org="com.adaptris" name="adp-core" rev="${adp-core-version}" changing="true"/>
-  	<dependency org="com.adaptris" name="adp-apt" rev="${adp-core-version}" changing="true"/>
+  	<dependency org="com.adaptris" name="adp-core" rev="${adp-core-version}" conf="*->*,!sources,!javadoc" changing="true"/>
+    <dependency org="com.adaptris" name="adp-apt" rev="${adp-core-version}" conf="compile->compile" changing="true"/>
   	<dependency org="com.adaptris" name="adp-stubs" rev="${adp-core-version}" changing="true" conf="test->default"/>
   	<dependency org="com.tibco" name="tibjms" rev="6.3.0"/>
   	<dependency org="com.tibco" name="tibrv" rev="7.5.1"/>
