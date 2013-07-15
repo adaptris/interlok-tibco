@@ -12,22 +12,32 @@
 	  <conf name="system" visibility="public" description="this scope is similar to provided except that you have to provide the JAR which contains it explicitly. The artifact is always available and is not looked up in a repository."/>
 	  <conf name="sources" visibility="public" description="this configuration contains the source artifact of this module, if any."/>
 	  <conf name="javadoc" visibility="public" description="this configuration contains the javadoc artifact of this module, if any."/>
-  	<conf name="optional" visibility="public" description="contains all optional dependencies"/>   
+  	<conf name="optional" visibility="public" description="contains all optional dependencies"/>
   </configurations>
   <publications>
      <artifact name="adp-tibco" type="jar" ext="jar"/>
      <artifact name="adp-tibco" type="pom" ext="pom"/>
   </publications>
   <dependencies>
-  	<dependency org="com.adaptris" name="adp-core" rev="${adp-core-version}" conf="*->*,!sources,!javadoc" changing="true"/>
-    <dependency org="com.adaptris" name="adp-apt" rev="${adp-core-version}" conf="compile->compile" changing="true"/>
+  	<dependency org="com.adaptris" name="adp-core" rev="${adp-core-version}" conf="compile->default" changing="true"/>
+    <dependency org="com.adaptris" name="adp-apt" rev="${adp-core-version}" conf="compile->default" changing="true"/>
   	<dependency org="com.adaptris" name="adp-stubs" rev="${adp-core-version}" changing="true" conf="test->default"/>
-  	<dependency org="com.tibco" name="tibjms" rev="6.3.0"/>
-  	<dependency org="com.tibco" name="tibrv" rev="7.5.1"/>
+  	<dependency org="com.tibco" name="tibjms" rev="6.3.0" conf="compile->default"/>
+  	<dependency org="com.tibco" name="tibrv" rev="7.5.1" conf="compile->default"/>
   	<dependency org="org.apache.geronimo.specs" name="geronimo-jms_1.1_spec" rev="1.1.1" conf="test->default"/>
-  	<dependency org="org.apache.velocity" name="velocity" rev="1.7" transitive="false"/> <!-- Without transitive, all velocities deps will be included, which will break us cos ant 1.6 will also be included. -->
+
+  	<dependency org="org.apache.velocity" name="velocity" rev="1.7" transitive="false" conf="compile->default"/>
+    <dependency org="org.slf4j" name="slf4j-api" rev="1.7.5" conf="compile->default" />
+    <dependency org="org.slf4j" name="jcl-over-slf4j" rev="1.7.5" conf="compile->default" />
+
   	<dependency org="junit" name="junit" rev="4.11" conf="test->default"/>
+  	<dependency org="org.slf4j" name="slf4j-log4j12" rev="1.7.5" conf="runtime->default"/>
+  	<dependency org="log4j" name="log4j" rev="1.2.17" conf="runtime->default"/>
   	<dependency org="org.mockito" name="mockito-all" rev="1.9.5" conf="test->default"/>
+
     <exclude org="commons-logging"/>
+    <exclude org="org.apache.ant" artifact="ant"/>
+    <exclude org="org.apache.ant" artifact="ant-launcher"/>
+    <exclude org="ant"/>
   </dependencies>
 </ivy-module>
