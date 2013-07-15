@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivy-module version="2.0">
-  <info organisation="com.adaptris" module="adp-tibco" revision="${ivy.publish.revision.final}" status="release"/>
+  <info organisation="com.adaptris" module="adp-tibco" revision="${ivy.publish.revision}" status="release"/>
 
   <configurations>
 	  <conf name="default" visibility="public" description="runtime dependencies and master artifact can be used with this conf" extends="runtime,master"/>
@@ -13,10 +13,14 @@
 	  <conf name="sources" visibility="public" description="this configuration contains the source artifact of this module, if any."/>
 	  <conf name="javadoc" visibility="public" description="this configuration contains the javadoc artifact of this module, if any."/>
   	<conf name="optional" visibility="public" description="contains all optional dependencies"/>
+	  <conf name="ant" visibility="private" description="Scope for downloading various jars required to support the build.xml"/>
+
   </configurations>
   <publications>
      <artifact name="adp-tibco" type="jar" ext="jar"/>
      <artifact name="adp-tibco" type="pom" ext="pom"/>
+     <artifact name="adp-tibco-javadoc" type="javadoc" ext="zip" conf="javadoc"/>
+
   </publications>
   <dependencies>
   	<dependency org="com.adaptris" name="adp-core" rev="${adp-core-version}" conf="compile->default" changing="true"/>
@@ -35,6 +39,14 @@
   	<dependency org="log4j" name="log4j" rev="1.2.17" conf="runtime->default"/>
   	<dependency org="org.mockito" name="mockito-all" rev="1.9.5" conf="test->default"/>
 
+
+    <!-- For Various ANT Tasks -->
+    <dependency org="ant-contrib" name="ant-contrib" rev="1.0b3" conf="ant->default" transitive="false"/>
+    <dependency org="com.yworks"  name="yguard" rev="2.4" conf="ant->default" transitive="false"/>
+    <dependency org="net.sourceforge.cobertura" name="cobertura" rev="1.9.4.1" conf="ant->default"/>
+    <!--
+    <dependency org="com.google.code.findbugs" name="findbugs" rev="2.0.1" conf="ant"/>
+    -->
     <exclude org="commons-logging"/>
     <exclude org="org.apache.ant" artifact="ant"/>
     <exclude org="org.apache.ant" artifact="ant-launcher"/>
