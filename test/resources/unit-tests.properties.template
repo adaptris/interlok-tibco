@@ -3,5 +3,5 @@ junit.ServiceCase.baseDir=${example-xml.build.dir}/services
 junit.ProducerCase.baseDir=${example-xml.build.dir}/producers
 junit.SampleConfigCase.baseDir=${example-xml.build.dir}
 
-junit.WmqNativeConsumerExamples.baseDir=${junit.ConsumerCase.baseDir}/websphere-native
-junit.WmqNativeProducerExamples.baseDir=${junit.ProducerCase.baseDir}/websphere-native
+junit.WmqNativeConsumerExamples.baseDir=${junit.ConsumerCase.baseDir}/tibco
+junit.WmqNativeProducerExamples.baseDir=${junit.ProducerCase.baseDir}/tibco
