@@ -87,19 +87,14 @@
 
 
   <target name="jar" depends="compile, jar.resources" description="Build a jar file">
-    <jar basedir="${classes.build.dir}"
-         jarfile="${project.dist.dir}/${project.jar.name}"
-         manifest="${build.dir}/Manifest.mf" />
-
+    <adapter:create-jar basedir="${classes.build.dir}" jarfile="${project.dist.dir}/${project.jar.name}" manifest="${build.dir}/Manifest.mf" />
   </target>
 
   <target name="javadoc" depends="prepare-ivy" description="Create javadocs">
     <adapter:ydoc-javadoc-creator sourcepath="${src.dir}" destdir="${api.doc.dir}">
       <groups>
-        <grouping>
           <group title="Interlok Tibco JMS Integration" packages="com.adaptris.core.jms.tibco:com.adaptris.core.jms.tibco.*"/>
           <group title="Interlok Tibco RV Integration" packages="com.adaptris.core.tibrv:com.adaptris.core.tibrv.*:com.adaptris.tibrv:com.adaptris.tibrv.*"/>
-        </grouping>
       </groups>
     </adapter:ydoc-javadoc-creator>
   </target>
