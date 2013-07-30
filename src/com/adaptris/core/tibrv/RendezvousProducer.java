@@ -8,7 +8,6 @@ package com.adaptris.core.tibrv;
 
 import org.perf4j.aop.Profiled;
 
-import com.adaptris.annotation.MarshallingImperative;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ProduceDestination;
@@ -42,7 +41,6 @@ import com.tibco.tibrv.TibrvMsgCallback;
  * </p>
  */
 @XStreamAlias("tibrv-rendezvous-producer")
-@MarshallingImperative(mapTo = "tibrv-rendezvous-producer", transientFields = {})
 public class RendezvousProducer extends ProduceOnlyProducerImp
   implements TibrvMsgCallback {
 

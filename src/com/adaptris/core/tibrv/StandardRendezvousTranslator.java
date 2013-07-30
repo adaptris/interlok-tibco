@@ -11,7 +11,6 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.adaptris.annotation.MarshallingImperative;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.AdaptrisMessageTranslator;
@@ -40,7 +39,6 @@ import com.tibco.tibrv.TibrvMsgField;
  * </p>
  */
 @XStreamAlias("tibrv-standard-translator")
-@MarshallingImperative(mapTo = "tibrv-standard-translator", transientFields = {})
 public class StandardRendezvousTranslator implements RendezvousTranslator {
 
 

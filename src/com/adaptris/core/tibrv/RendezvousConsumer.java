@@ -6,7 +6,6 @@
  */
 package com.adaptris.core.tibrv;
 
-import com.adaptris.annotation.MarshallingImperative;
 import com.adaptris.core.AdaptrisMessageConsumerImp;
 import com.adaptris.core.CoreException;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -33,7 +32,6 @@ import com.tibco.tibrv.TibrvMsgCallback;
  * </p>
  */
 @XStreamAlias("tibrv-rendezvous-consumer")
-@MarshallingImperative(mapTo = "tibrv-rendezvous-consumer", transientFields = {})
 public class RendezvousConsumer extends AdaptrisMessageConsumerImp
   implements TibrvMsgCallback {
 
