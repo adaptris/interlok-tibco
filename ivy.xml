@@ -13,6 +13,7 @@
 	  <conf name="sources" visibility="public" description="this configuration contains the source artifact of this module, if any."/>
 	  <conf name="javadoc" visibility="public" description="this configuration contains the javadoc artifact of this module, if any."/>
   	<conf name="optional" visibility="public" description="contains all optional dependencies"/>
+    <conf name="examples" visibility="public" description="this configuration contains the examples artifact of this module, if any."/>
 	  <conf name="ant" visibility="private" description="Scope for downloading various jars required to support the build.xml"/>
 
   </configurations>
@@ -20,6 +21,7 @@
      <artifact name="adp-tibco" type="jar" ext="jar"/>
      <artifact name="adp-tibco" type="pom" ext="pom"/>
      <artifact name="adp-tibco-javadoc" type="javadoc" ext="zip" conf="javadoc"/>
+     <artifact name="adp-tibco-examples" type="examples" ext="zip" conf="examples"/>
 
   </publications>
   <dependencies>
