@@ -7,11 +7,12 @@
 package com.adaptris.core.tibrv;
 
 import com.adaptris.core.AdaptrisMessageConsumerImp;
+import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.CoreException;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.adaptris.tibrv.RendezvousClient;
 import com.adaptris.tibrv.StandardRendezvousClient;
 import com.adaptris.util.license.License;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.tibco.tibrv.TibrvException;
 import com.tibco.tibrv.TibrvListener;
 import com.tibco.tibrv.TibrvMsg;
@@ -68,7 +69,7 @@ public class RendezvousConsumer extends AdaptrisMessageConsumerImp
   public void init() throws CoreException {
     try {
       rendezvousClient.init();
-      getRendezvousTranslator().registerMessageFactory(getMessageFactory());
+      getRendezvousTranslator().registerMessageFactory(AdaptrisMessageFactory.defaultIfNull(getMessageFactory()));
       rendezvousClient.createMessageListener
         (this, getDestination().getDestination());
     }

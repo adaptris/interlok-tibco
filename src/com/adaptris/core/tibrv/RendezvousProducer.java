@@ -9,14 +9,15 @@ package com.adaptris.core.tibrv;
 import org.perf4j.aop.Profiled;
 
 import com.adaptris.core.AdaptrisMessage;
+import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ProduceDestination;
 import com.adaptris.core.ProduceException;
 import com.adaptris.core.ProduceOnlyProducerImp;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.adaptris.tibrv.RendezvousClient;
 import com.adaptris.tibrv.StandardRendezvousClient;
 import com.adaptris.util.license.License;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.tibco.tibrv.TibrvException;
 import com.tibco.tibrv.TibrvListener;
 import com.tibco.tibrv.TibrvMsg;
@@ -76,7 +77,7 @@ public class RendezvousProducer extends ProduceOnlyProducerImp
   public void init() throws CoreException {
     try {
       rendezvousClient.init();
-      rendezvousTranslator.registerMessageFactory(getMessageFactory());
+      rendezvousTranslator.registerMessageFactory(AdaptrisMessageFactory.defaultIfNull(getMessageFactory()));
       rendezvousClient.createConfirmationListener(this);
     }
     catch (TibrvException e) {
