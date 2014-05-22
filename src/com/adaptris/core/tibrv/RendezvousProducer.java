@@ -17,6 +17,7 @@ import com.adaptris.core.ProduceOnlyProducerImp;
 import com.adaptris.tibrv.RendezvousClient;
 import com.adaptris.tibrv.StandardRendezvousClient;
 import com.adaptris.util.license.License;
+import com.adaptris.util.license.License.LicenseType;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.tibco.tibrv.TibrvException;
 import com.tibco.tibrv.TibrvListener;
@@ -25,20 +26,19 @@ import com.tibco.tibrv.TibrvMsgCallback;
 
 /**
  * <p>
- * Implementation of <code>AdaptrisMessageProducee</code> which handles
- * Tibco Rendezvous messages.
- * </p><p>
- * Implements <code>TibrvMsgCallback</code> to handle confirmation messages
- * which are received if this class is used in conjunction with
- * <code>CertifiedRendezvousClient</code>.
+ * Implementation of <code>AdaptrisMessageProducee</code> which handles Tibco Rendezvous messages.
  * </p>
  * <p>
- * <strong>Requires an ENTERPRISE license</strong>
+ * Implements <code>TibrvMsgCallback</code> to handle confirmation messages which are received if this class is used in conjunction
+ * with <code>CertifiedRendezvousClient</code>.
  * </p>
- *
  * <p>
- * In the adapter configuration file this class is aliased as <b>tibrv-rendezvous-producer</b> which is the preferred alternative to the
- * fully qualified classname when building your configuration.
+ * Requires an Enterprise license
+ * </p>
+ * 
+ * <p>
+ * In the adapter configuration file this class is aliased as <b>tibrv-rendezvous-producer</b> which is the preferred alternative to
+ * the fully qualified classname when building your configuration.
  * </p>
  */
 @XStreamAlias("tibrv-rendezvous-producer")
@@ -63,13 +63,9 @@ public class RendezvousProducer extends ProduceOnlyProducerImp
     setRendezvousTranslator(new StandardRendezvousTranslator());
   }
 
-  /**
-   *
-   * @see com.adaptris.core.AdaptrisComponent#isEnabled(License)
-   */
   @Override
-  public boolean isEnabled(License l) throws CoreException {
-    return l.isEnabled(License.ENTERPRISE);
+  public boolean isEnabled(License license) throws CoreException {
+    return license.isEnabled(LicenseType.Enterprise);
   }
 
   /** @see com.adaptris.core.AdaptrisComponent#init() */

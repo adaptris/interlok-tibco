@@ -12,6 +12,7 @@ import com.adaptris.core.CoreException;
 import com.adaptris.tibrv.RendezvousClient;
 import com.adaptris.tibrv.StandardRendezvousClient;
 import com.adaptris.util.license.License;
+import com.adaptris.util.license.License.LicenseType;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.tibco.tibrv.TibrvException;
 import com.tibco.tibrv.TibrvListener;
@@ -20,16 +21,15 @@ import com.tibco.tibrv.TibrvMsgCallback;
 
 /**
  * <p>
- * Implementation of <code>AdaptrisMessageConsumer</code> which handles
- * Tibco Rendezvous messages.
+ * Implementation of <code>AdaptrisMessageConsumer</code> which handles Tibco Rendezvous messages.
  * </p>
  * <p>
- * <strong>Requires an ENTERPRISE license</strong>
+ * Requires an Enterprise license
  * </p>
- *
+ * 
  * <p>
- * In the adapter configuration file this class is aliased as <b>tibrv-rendezvous-consumer</b> which is the preferred alternative to the
- * fully qualified classname when building your configuration.
+ * In the adapter configuration file this class is aliased as <b>tibrv-rendezvous-consumer</b> which is the preferred alternative to
+ * the fully qualified classname when building your configuration.
  * </p>
  */
 @XStreamAlias("tibrv-rendezvous-consumer")
@@ -54,13 +54,9 @@ public class RendezvousConsumer extends AdaptrisMessageConsumerImp
     setRendezvousTranslator(new StandardRendezvousTranslator());
   }
 
-  /**
-   *
-   * @see com.adaptris.core.AdaptrisComponent#isEnabled(License)
-   */
   @Override
-  public boolean isEnabled(License l) throws CoreException {
-    return l.isEnabled(License.ENTERPRISE);
+  public boolean isEnabled(License license) throws CoreException {
+    return license.isEnabled(LicenseType.Enterprise);
   }
 
 
