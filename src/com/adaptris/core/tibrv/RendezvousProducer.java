@@ -32,14 +32,9 @@ import com.tibco.tibrv.TibrvMsgCallback;
  * Implements <code>TibrvMsgCallback</code> to handle confirmation messages which are received if this class is used in conjunction
  * with <code>CertifiedRendezvousClient</code>.
  * </p>
- * <p>
- * Requires an Enterprise license
- * </p>
  * 
- * <p>
- * In the adapter configuration file this class is aliased as <b>tibrv-rendezvous-producer</b> which is the preferred alternative to
- * the fully qualified classname when building your configuration.
- * </p>
+ * @config tibrv-rendezvous-producer
+ * @license ENTERPRISE
  */
 @XStreamAlias("tibrv-rendezvous-producer")
 public class RendezvousProducer extends ProduceOnlyProducerImp

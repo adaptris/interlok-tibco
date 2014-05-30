@@ -22,21 +22,17 @@ import com.tibco.tibrv.TibrvMsgField;
 
 /**
  * <p>
- * Implementation of <code>RendezvousTranslator</code> which stores
- * <code>AdaptrisMessage</code>'s payload against a <code>TibrvMsg</code> field
- * of type <code>TibrvMsg.OPAQUE</code>, and unique ID and char encoding against
- * fields of type <code>TibrvMsg.STRING</code>. <code>AdaptrisMessage</code>
- * metadata is store in a child <code>TibrvMsg</code> as
+ * Implementation of <code>RendezvousTranslator</code> which stores <code>AdaptrisMessage</code>'s payload against a
+ * <code>TibrvMsg</code> field of type <code>TibrvMsg.OPAQUE</code>, and unique ID and char encoding against fields of type
+ * <code>TibrvMsg.STRING</code>. <code>AdaptrisMessage</code> metadata is store in a child <code>TibrvMsg</code> as
  * <code>Tibrv.STRING</code>s using the metadata key as the 'name.
  * </p>
  * <p>
- * The names against which these elements are stored / expected to be found in
- * <code>TibrvMsg</code> are configurable and defaulted in the constructor.
+ * The names against which these elements are stored / expected to be found in <code>TibrvMsg</code> are configurable and defaulted
+ * in the constructor.
  * </p>
- * <p>
- * In the adapter configuration file this class is aliased as <b>tibrv-standard-translator</b> which is the preferred alternative to the
- * fully qualified classname when building your configuration.
- * </p>
+ * 
+ * @config tibrv-standard-translator
  */
 @XStreamAlias("tibrv-standard-translator")
 public class StandardRendezvousTranslator implements RendezvousTranslator {

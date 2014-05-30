@@ -6,6 +6,7 @@
  */
 package com.adaptris.tibrv;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.tibco.tibrv.TibrvCmListener;
 import com.tibco.tibrv.TibrvCmMsg;
 import com.tibco.tibrv.TibrvCmTransport;
@@ -16,11 +17,13 @@ import com.tibco.tibrv.TibrvMsgCallback;
 
 /**
  * <p>
- * Implementation of <code>RendezvousClient</code> which provides certified
- * message delivery.  Persistent messaging requires a ledger file name and 
- * request old to be set to true.
+ * Implementation of <code>RendezvousClient</code> which provides certified message delivery. Persistent messaging requires a ledger
+ * file name and request old to be set to true.
  * </p>
+ * 
+ * @config certified-rendezvous-client
  */
+@XStreamAlias("certified-rendezvous-client")
 public class CertifiedRendezvousClient extends RendezvousClientImp {
   
   // persistent
@@ -31,9 +34,9 @@ public class CertifiedRendezvousClient extends RendezvousClientImp {
   private boolean requestOld; // i.e. durable
   
   // transient
-  private TibrvCmTransport cmTransport;
-  private TibrvCmListener messageListener;
-  private TibrvListener confirmListener;
+  private transient TibrvCmTransport cmTransport;
+  private transient TibrvCmListener messageListener;
+  private transient TibrvListener confirmListener;
   
   /**
    * <p>

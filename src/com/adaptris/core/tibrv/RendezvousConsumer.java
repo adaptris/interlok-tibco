@@ -23,14 +23,9 @@ import com.tibco.tibrv.TibrvMsgCallback;
  * <p>
  * Implementation of <code>AdaptrisMessageConsumer</code> which handles Tibco Rendezvous messages.
  * </p>
- * <p>
- * Requires an Enterprise license
- * </p>
  * 
- * <p>
- * In the adapter configuration file this class is aliased as <b>tibrv-rendezvous-consumer</b> which is the preferred alternative to
- * the fully qualified classname when building your configuration.
- * </p>
+ * @config tibrv-rendezvous-consumer
+ * @license ENTERPRISE
  */
 @XStreamAlias("tibrv-rendezvous-consumer")
 public class RendezvousConsumer extends AdaptrisMessageConsumerImp

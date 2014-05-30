@@ -33,9 +33,9 @@ public abstract class RendezvousClientImp implements RendezvousClient {
   // queue limit policy / amount / max events / priority not exposed
   
   // transient
-  protected TibrvRvdTransport transport;
-  protected TibrvQueue queue;
-  private TibrvDispatcher dispatcher;
+  protected transient TibrvRvdTransport transport;
+  protected transient TibrvQueue queue;
+  private transient TibrvDispatcher dispatcher;
   
   /** @see com.adaptris.tibrv.RendezvousClient#init() */
   public void init() throws TibrvException {

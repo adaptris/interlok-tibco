@@ -4,19 +4,20 @@ import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 
 import com.adaptris.core.jms.UrlVendorImplementation;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.tibco.tibjms.TibjmsQueueConnectionFactory;
 
 /**
  * <p>
  * <code>BasicTibcoEmsImplementation</code>
  * </p>
- * <p>
- * In the adapter configuration file this class is aliased as <b>BasicTibcoEmsImplementation</b> which is the preferred alternative
- * to the fully qualified classname when building your configuration.
- * </p>
+ * 
+ * @config basic-tibco-ems-implementation
+ * @license BASIC
  * 
  * @author Aaron - 5 Oct 2012
  */
+@XStreamAlias("basic-tibco-ems-implementation")
 public class BasicTibcoEmsImplementation extends UrlVendorImplementation {
 
   @Override

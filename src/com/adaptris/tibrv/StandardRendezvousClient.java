@@ -6,19 +6,22 @@
  */
 package com.adaptris.tibrv;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.tibco.tibrv.TibrvException;
 import com.tibco.tibrv.TibrvListener;
 import com.tibco.tibrv.TibrvMsgCallback;
 
 /**
  * <p>
- * Implementation of <code>RendezvousClient</code> which provides reliable
- * message delivery.
+ * Implementation of <code>RendezvousClient</code> which provides reliable message delivery.
  * </p>
+ * 
+ * @config standard-rendezvous-client
  */
+@XStreamAlias("standard-rendezvous-client")
 public class StandardRendezvousClient extends RendezvousClientImp {
   
-  private TibrvListener listener;
+  private transient TibrvListener listener;
 
   /** 
    * <p><i>

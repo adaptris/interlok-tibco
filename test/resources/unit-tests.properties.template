@@ -6,5 +6,5 @@ junit.SampleConfigCase.baseDir=${example-xml.build.dir}
 junit.JmsConsumerExamples.baseDir=${junit.ConsumerCase.baseDir}
 junit.JmsProducerExamples.baseDir=${junit.ProducerCase.baseDir}
 
-junit.TibrvProducerExamples.baseDir=${junit.ConsumerCase.baseDir}
-junit.TibrvConsumerExamples.baseDir=${junit.ProducerCase.baseDir}
+junit.TibrvProducerExamples.baseDir=${junit.ProducerCase.baseDir}
+junit.TibrvConsumerExamples.baseDir=${junit.ConsumerCase.baseDir}

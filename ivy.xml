@@ -28,6 +28,7 @@
   <dependencies>
   	<dependency org="com.adaptris" name="adp-core" rev="${adp-core-version}" conf="compile->default" changing="true"/>
   	<dependency org="com.adaptris" name="adp-stubs" rev="${adp-core-version}" changing="true" conf="test->default"/>
+    <dependency org="com.adaptris" name="adp-core-apt" rev="${adp-core-version}" conf="compile->default;ant->default" changing="true"/>
   	<dependency org="com.tibco" name="tibjms" rev="6.3.0" conf="compile->default"/>
   	<dependency org="com.tibco" name="tibrv" rev="7.5.1" conf="compile->default"/>
   	<dependency org="org.apache.geronimo.specs" name="geronimo-jms_1.1_spec" rev="1.1.1" conf="test->default"/>
