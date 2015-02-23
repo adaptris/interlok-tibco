@@ -12,7 +12,8 @@
 
     <property name="src.dir" value="${basedir}/src"/>
     <property name="build-util.lib.dir"     value="${basedir}/../build-util"/>
-
+    <property name="manifest.title" value="Interlok/Tibco Integration"/>
+    
     <property name="testsrc.dir" value="${basedir}/test/src"/>
     <property name="build.dir" value="${basedir}/build"/>
     <property name="resources.dir" value="${basedir}/resources"/>
@@ -66,13 +67,13 @@
 
   <target name="jar.resources" depends="prepare">
     <!-- build the manifest file -->
-    <adapter:create-manifest file="${build.dir}/Manifest.mf" title="Interlok/Tibco Integration"/>
+    <adapter:create-manifest file="${build.dir}/Manifest.mf" title="${manifest.title}"/>
 
   </target>
 
 
   <target name="jar" depends="compile, jar.resources" description="Build a jar file">
-    <adapter:create-jar basedir="${classes.build.dir}" jarfile="${project.dist.dir}/${project.jar.name}" manifest="${build.dir}/Manifest.mf" />
+    <adapter:create-jar basedir="${classes.build.dir}" jarfile="${project.dist.dir}/${project.jar.name}" manifest="${build.dir}/Manifest.mf" version-title="${manifest.title}"/>
   </target>
 
   <target name="javadoc" depends="prepare-ivy" description="Create javadocs">
