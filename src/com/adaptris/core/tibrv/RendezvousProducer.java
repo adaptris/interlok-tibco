@@ -6,8 +6,12 @@
  */
 package com.adaptris.core.tibrv;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import org.perf4j.aop.Profiled;
 
+import com.adaptris.annotation.AutoPopulated;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.CoreException;
@@ -41,7 +45,13 @@ public class RendezvousProducer extends ProduceOnlyProducerImp
   implements TibrvMsgCallback {
 
   // persistent
+  @NotNull
+  @AutoPopulated
+  @Valid
   private RendezvousClient rendezvousClient;
+  @NotNull
+  @AutoPopulated
+  @Valid
   private RendezvousTranslator rendezvousTranslator;
 
   /**

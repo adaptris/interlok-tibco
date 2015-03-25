@@ -6,6 +6,8 @@
  */
 package com.adaptris.tibrv;
 
+import javax.validation.constraints.Min;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.tibco.tibrv.TibrvCmListener;
 import com.tibco.tibrv.TibrvCmMsg;
@@ -30,6 +32,7 @@ public class CertifiedRendezvousClient extends RendezvousClientImp {
   private String uniqueName;
   private String confirmationSubject;
   private String ledgerFileName;
+  @Min(0)
   private long deliveryTimeLimit;
   private boolean requestOld; // i.e. durable
   

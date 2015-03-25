@@ -8,6 +8,9 @@ package com.adaptris.core.tibrv;
 
 import java.util.Iterator;
 
+import javax.validation.Valid;
+
+import org.hibernate.validator.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,9 +43,17 @@ public class StandardRendezvousTranslator implements RendezvousTranslator {
 
   private transient Logger log = LoggerFactory.getLogger(this.getClass());
 
+  @NotBlank
+  @Valid
   private String uniqueIdName;
+  @NotBlank
+  @Valid
   private String payloadName;
+  @NotBlank
+  @Valid
   private String charEncName;
+  @NotBlank
+  @Valid
   private String metadataName;
   private transient AdaptrisMessageFactory messageFactoryToUse;
 
