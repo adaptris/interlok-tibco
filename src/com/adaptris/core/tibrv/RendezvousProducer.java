@@ -18,10 +18,12 @@ import com.adaptris.core.CoreException;
 import com.adaptris.core.ProduceDestination;
 import com.adaptris.core.ProduceException;
 import com.adaptris.core.ProduceOnlyProducerImp;
+import com.adaptris.core.licensing.License;
+import com.adaptris.core.licensing.License.LicenseType;
+import com.adaptris.core.licensing.LicenseChecker;
+import com.adaptris.core.licensing.LicensedComponent;
 import com.adaptris.tibrv.RendezvousClient;
 import com.adaptris.tibrv.StandardRendezvousClient;
-import com.adaptris.util.license.License;
-import com.adaptris.util.license.License.LicenseType;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.tibco.tibrv.TibrvException;
 import com.tibco.tibrv.TibrvListener;
@@ -42,7 +44,7 @@ import com.tibco.tibrv.TibrvMsgCallback;
  */
 @XStreamAlias("tibrv-rendezvous-producer")
 public class RendezvousProducer extends ProduceOnlyProducerImp
-  implements TibrvMsgCallback {
+ implements TibrvMsgCallback, LicensedComponent {
 
   // persistent
   @NotNull
@@ -69,9 +71,15 @@ public class RendezvousProducer extends ProduceOnlyProducerImp
   }
 
   @Override
-  public boolean isEnabled(License license) throws CoreException {
+  public final void prepare() throws CoreException {
+    LicenseChecker.newChecker().checkLicense(this);
+  }
+
+  @Override
+  public boolean isEnabled(License license) {
     return license.isEnabled(LicenseType.Enterprise);
   }
+
 
   /** @see com.adaptris.core.AdaptrisComponent#init() */
   @Override
