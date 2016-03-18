@@ -11,10 +11,13 @@ import javax.validation.constraints.NotNull;
 
 import org.perf4j.aop.Profiled;
 
+import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.AutoPopulated;
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.CoreException;
+import com.adaptris.core.NullConnection;
 import com.adaptris.core.ProduceDestination;
 import com.adaptris.core.ProduceException;
 import com.adaptris.core.ProduceOnlyProducerImp;
@@ -43,6 +46,8 @@ import com.tibco.tibrv.TibrvMsgCallback;
  * @license ENTERPRISE
  */
 @XStreamAlias("tibrv-rendezvous-producer")
+@AdapterComponent
+@ComponentProfile(summary = "Send messages to Tibco Rendezvous", tag = "producer,tibco", recommended = {NullConnection.class})
 public class RendezvousProducer extends ProduceOnlyProducerImp
  implements TibrvMsgCallback, LicensedComponent {
 

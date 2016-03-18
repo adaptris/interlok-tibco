@@ -9,10 +9,13 @@ package com.adaptris.core.tibrv;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.AutoPopulated;
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.AdaptrisMessageConsumerImp;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.CoreException;
+import com.adaptris.core.NullConnection;
 import com.adaptris.core.licensing.License;
 import com.adaptris.core.licensing.License.LicenseType;
 import com.adaptris.core.licensing.LicenseChecker;
@@ -34,6 +37,8 @@ import com.tibco.tibrv.TibrvMsgCallback;
  * @license ENTERPRISE
  */
 @XStreamAlias("tibrv-rendezvous-consumer")
+@AdapterComponent
+@ComponentProfile(summary = "Receive messages from Tibco Rendezvous", tag = "consumer,tibco", recommended = {NullConnection.class})
 public class RendezvousConsumer extends AdaptrisMessageConsumerImp
  implements TibrvMsgCallback, LicensedComponent {
 
