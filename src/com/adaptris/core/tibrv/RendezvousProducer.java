@@ -9,8 +9,6 @@ package com.adaptris.core.tibrv;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.perf4j.aop.Profiled;
-
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.AutoPopulated;
 import com.adaptris.annotation.ComponentProfile;
@@ -156,7 +154,6 @@ public class RendezvousProducer extends ProduceOnlyProducerImp
    *     com.adaptris.core.ProduceDestination)
    */
   @Override
-  @Profiled(tag = "{$this.getClass().getSimpleName()}.produce()", logger = "com.adaptris.perf4j.tibrv.TimingLogger")
   public void produce(AdaptrisMessage msg, ProduceDestination destination)
     throws ProduceException {
     try {
