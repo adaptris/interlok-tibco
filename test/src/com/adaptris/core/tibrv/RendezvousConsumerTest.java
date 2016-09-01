@@ -12,10 +12,12 @@ import org.mockito.MockitoAnnotations;
 
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageListener;
+import com.adaptris.core.ClosedState;
 import com.adaptris.core.ConfiguredConsumeDestination;
 import com.adaptris.core.ConsumeDestination;
 import com.adaptris.core.ConsumerCase;
 import com.adaptris.core.CoreException;
+import com.adaptris.core.InitialisedState;
 import com.adaptris.core.StandaloneConsumer;
 import com.adaptris.core.util.LifecycleHelper;
 import com.adaptris.tibrv.RendezvousClient;
@@ -94,6 +96,7 @@ public class RendezvousConsumerTest extends ConsumerCase {
 		verify(clientSpy).createMessageListener(consumer, DESTINATION);
 
 		doThrow(exception).when(clientSpy).init();
+		consumer.changeState(ClosedState.getInstance()); // reset the state to allow for init to fire again.
 		try{
       LifecycleHelper.init(consumer);
 			fail("No CoreException thrown for .init() fail");
@@ -129,6 +132,8 @@ public class RendezvousConsumerTest extends ConsumerCase {
 		doNothing().when(clientSpy).stop();
 		doNothing().when(clientSpy).close();
 
+		consumer.changeState(InitialisedState.getInstance());
+		
     LifecycleHelper.start(consumer);
 		verify(clientSpy).start();
 
