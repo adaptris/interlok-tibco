@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
-  <info organisation="com.adaptris" module="adp-tibco" revision="${ivy.publish.revision}" status="release"/>
+  <info organisation="com.adaptris" module="interlok-tibco" revision="${ivy.publish.revision}" status="release"/>
 
   <configurations>
     <conf name="default" visibility="public" description="runtime dependencies and master artifact can be used with this conf" extends="runtime,master"/>
@@ -19,8 +19,8 @@
 
   </configurations>
   <publications>
-     <artifact name="adp-tibco" type="jar" ext="jar"/>
-     <artifact name="adp-tibco" type="pom" ext="pom"/>
+     <artifact name="interlok-tibco" type="jar" ext="jar"/>
+     <artifact name="interlok-tibco" type="pom" ext="pom"/>
 
 
      <artifact type="javadoc" ext="jar" conf="javadoc" m:classifier="javadoc"/>
@@ -28,12 +28,12 @@
 
   </publications>
   <dependencies>
-    <dependency org="com.adaptris" name="adp-core" rev="${adp-core-version}" conf="compile->default;javadoc->javadoc" changing="true"/>
-    <dependency org="com.adaptris" name="interlok-common" rev="${adp-core-version}" conf="compile->default;javadoc->javadoc" changing="true"/>
-    <dependency org="com.adaptris" name="adp-licensing" rev="${adp-core-version}" conf="compile->default" changing="true"/>
-    <dependency org="com.adaptris" name="adp-licensing-stub" rev="${adp-core-version}" conf="test->default" changing="true"/>
-    <dependency org="com.adaptris" name="adp-stubs" rev="${adp-core-version}" changing="true" conf="test->default"/>
-    <dependency org="com.adaptris" name="adp-core-apt" rev="${adp-core-version}" conf="compile->default;ant->default" changing="true"/>
+    <dependency org="com.adaptris" name="interlok-core" rev="${interlok-core-version}" conf="compile->default;javadoc->javadoc" changing="true"/>
+    <dependency org="com.adaptris" name="interlok-common" rev="${interlok-core-version}" conf="compile->default;javadoc->javadoc" changing="true"/>
+    <dependency org="com.adaptris" name="interlok-licensing" rev="${interlok-core-version}" conf="compile->default" changing="true"/>
+    <dependency org="com.adaptris" name="interlok-licensing-stub" rev="${interlok-core-version}" conf="test->default" changing="true"/>
+    <dependency org="com.adaptris" name="interlok-stubs" rev="${interlok-core-version}" changing="true" conf="test->default"/>
+    <dependency org="com.adaptris" name="interlok-core-apt" rev="${interlok-core-version}" conf="compile->default;ant->default" changing="true"/>
     <dependency org="com.tibco" name="tibjms" rev="6.3.0" conf="optional->default"/>
     <dependency org="com.tibco" name="tibrv" rev="7.5.1" conf="optional->default"/>
     <dependency org="org.apache.geronimo.specs" name="geronimo-jms_1.1_spec" rev="1.1.1" conf="test->default"/>
