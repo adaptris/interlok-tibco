@@ -6,7 +6,7 @@
     <property name="ivy.dir" value="${basedir}/ivy"/>
     <property name="ivy.jar.file" value="${ivy.dir}/ivy.jar"/>
     <property name="ivy.settings.xml" value="${ivy.dir}/ivy-settings.xml"/>
-    <property name="ivy.download.baseurl" value="https://development.adaptris.net/nexus/content/groups/public/org/apache/ivy/ivy"/>
+    <property name="ivy.download.baseurl" value="https://nexus.adaptris.net/nexus/content/groups/public/org/apache/ivy/ivy"/>
     <property name="ivy.download.url" value="${ivy.download.baseurl}/${ivy.install.version}/ivy-${ivy.install.version}.jar"/>
     <property name="ivy.xml.file" value="${basedir}/ivy.xml"/>
     <property name="ivy.offline.mode" value="false"/>
