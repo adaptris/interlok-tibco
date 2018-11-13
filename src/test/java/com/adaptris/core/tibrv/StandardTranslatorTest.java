@@ -48,7 +48,7 @@ public class StandardTranslatorTest extends TestCase {
     AdaptrisMessage input = AdaptrisMessageFactory.getDefaultInstance()
         .newMessage(PAYLOAD_VAL);
     input.setUniqueId(UNIQUE_ID_VAL);
-    input.setCharEncoding(CHAR_ENC_VAL);
+    input.setContentEncoding(CHAR_ENC_VAL);
 
     TibrvMsg result = translator.translate(input, "subject");
 
@@ -75,7 +75,7 @@ public class StandardTranslatorTest extends TestCase {
     AdaptrisMessage input = AdaptrisMessageFactory.getDefaultInstance()
         .newMessage(PAYLOAD_VAL);
     input.setUniqueId(UNIQUE_ID_VAL);
-    input.setCharEncoding(CHAR_ENC_VAL);
+    input.setContentEncoding(CHAR_ENC_VAL);
     input.addMetadata("key", "val");
     input.addMetadata("key2", "val");
 
@@ -99,7 +99,7 @@ public class StandardTranslatorTest extends TestCase {
     AdaptrisMessage expected = AdaptrisMessageFactory.getDefaultInstance()
         .newMessage(PAYLOAD_VAL);
     expected.setUniqueId(UNIQUE_ID_VAL);
-    expected.setCharEncoding(CHAR_ENC_VAL);
+    expected.setContentEncoding(CHAR_ENC_VAL);
 
     TibrvMsg input = new TibrvMsg();
     input.add(PAYLOAD_KEY, PAYLOAD_VAL.getBytes());
@@ -111,14 +111,14 @@ public class StandardTranslatorTest extends TestCase {
 
     assertTrue(Arrays.equals(expected.getPayload(), result.getPayload()));
     assertEquals(expected.getUniqueId(), result.getUniqueId());
-    assertEquals(expected.getCharEncoding(), result.getCharEncoding());
+    assertEquals(expected.getContentEncoding(), result.getContentEncoding());
   }
 
   public void testTibrvToAdaptrisWithMetadata() throws Exception {
     AdaptrisMessage expected = AdaptrisMessageFactory.getDefaultInstance()
         .newMessage(PAYLOAD_VAL);
     expected.setUniqueId(UNIQUE_ID_VAL);
-    expected.setCharEncoding(CHAR_ENC_VAL);
+    expected.setContentEncoding(CHAR_ENC_VAL);
     expected.addMetadata("key", "val");
     expected.addMetadata("key2", "val");
 
@@ -139,7 +139,7 @@ public class StandardTranslatorTest extends TestCase {
 
     assertTrue(Arrays.equals(expected.getPayload(), result.getPayload()));
     assertEquals(expected.getUniqueId(), result.getUniqueId());
-    assertEquals(expected.getCharEncoding(), result.getCharEncoding());
+    assertEquals(expected.getContentEncoding(), result.getContentEncoding());
 
     assertEquals(expected.getMetadataValue("key"), result
         .getMetadataValue("key"));
@@ -161,7 +161,7 @@ public class StandardTranslatorTest extends TestCase {
 
     AdaptrisMessage input = AdaptrisMessageFactory.getDefaultInstance()
         .newMessage();
-    input.setCharEncoding(null);
+    input.setContentEncoding(null);
     input.setUniqueId(UNIQUE_ID_VAL);
     input.addMetadata("key", "val");
     input.addMetadata("key2", "val");
@@ -204,7 +204,7 @@ public class StandardTranslatorTest extends TestCase {
     assertEquals(expected.getUniqueId(), result.getUniqueId());
 
     assertEquals(0, result.getPayload().length);
-    assertNull(result.getCharEncoding());
+    assertNull(result.getContentEncoding());
 
     assertEquals(expected.getMetadataValue("key"), result
         .getMetadataValue("key"));
@@ -222,7 +222,7 @@ public class StandardTranslatorTest extends TestCase {
 	catch(IllegalArgumentException e){}
     
     AdaptrisMessage input = AdaptrisMessageFactory.getDefaultInstance().newMessage();
-    input.setCharEncoding(null);
+    input.setContentEncoding(null);
     input.setUniqueId(UNIQUE_ID_VAL);
     input.addMetadata("key", "val");
     input.addMetadata("key2", "val");

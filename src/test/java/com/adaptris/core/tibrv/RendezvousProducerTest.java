@@ -62,7 +62,7 @@ public class RendezvousProducerTest extends ProducerCase {
 
 		adaptrisMsg = AdaptrisMessageFactory.getDefaultInstance().newMessage(PAYLOAD_VAL);
 		adaptrisMsg.setUniqueId(UNIQUE_ID_VAL);
-		adaptrisMsg.setCharEncoding(CHAR_ENC_VAL);
+		adaptrisMsg.setContentEncoding(CHAR_ENC_VAL);
 		adaptrisMsg.addMetadata("key", "val");
 		adaptrisMsg.addMetadata("key2", "val");
 

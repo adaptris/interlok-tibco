@@ -1,2 +1,2 @@
-# interlok-es-rest
+# interlok-tibco
 Tibco integration for Interlok.

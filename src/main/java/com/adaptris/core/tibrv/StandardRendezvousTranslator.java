@@ -11,8 +11,6 @@ import java.util.Iterator;
 import javax.validation.Valid;
 
 import org.hibernate.validator.constraints.NotBlank;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
@@ -39,9 +37,6 @@ import com.tibco.tibrv.TibrvMsgField;
  */
 @XStreamAlias("tibrv-standard-translator")
 public class StandardRendezvousTranslator implements RendezvousTranslator {
-
-
-  private transient Logger log = LoggerFactory.getLogger(this.getClass());
 
   @NotBlank
   @Valid
@@ -109,13 +104,13 @@ public class StandardRendezvousTranslator implements RendezvousTranslator {
       result.add(getPayloadName(), msg.getPayload(), TibrvMsg.OPAQUE);
     }
 
-    if (msg.getCharEncoding() != null) {
-      result.add(getCharEncName(), msg.getCharEncoding(), TibrvMsg.STRING);
+    if (msg.getContentEncoding() != null) {
+      result.add(getCharEncName(), msg.getContentEncoding(), TibrvMsg.STRING);
     }
 
     if (msg.getMetadata().size() > 0) {
       TibrvMsg metadata = new TibrvMsg();
-      Iterator itr = msg.getMetadata().iterator();
+      Iterator<MetadataElement> itr = msg.getMetadata().iterator();
 
       while (itr.hasNext()) {
         MetadataElement m = (MetadataElement) itr.next();
@@ -141,7 +136,7 @@ public class StandardRendezvousTranslator implements RendezvousTranslator {
     AdaptrisMessage result = currentMessageFactory().newMessage();
 
     result.setUniqueId((String) tibrvMsg.get(getUniqueIdName()));
-    result.setCharEncoding((String) tibrvMsg.get(getCharEncName()));
+    result.setContentEncoding((String) tibrvMsg.get(getCharEncName()));
     result.setPayload((byte[]) tibrvMsg.get(getPayloadName()));
 
     if (tibrvMsg.get(getMetadataName()) != null) {
