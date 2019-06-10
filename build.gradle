@@ -111,7 +111,6 @@ dependencies {
   compile ("com.adaptris:interlok-core:$interlokCoreVersion") { changing= true}
   compile ("com.adaptris:interlok-common:$interlokCoreVersion") { changing= true}
   compile ("com.adaptris:interlok-licensing:$interlokCoreVersion") { changing= true}
-  compile group: "com.adaptris", name: "interlok-xa", version: "$interlokCoreVersion", changing: true, optional
   compile ("org.slf4j:slf4j-api:$slf4jVersion")
   compile "com.tibco:tibjms:6.3.0", optional
   compile "com.tibco:tibrv:7.5.1", optional
