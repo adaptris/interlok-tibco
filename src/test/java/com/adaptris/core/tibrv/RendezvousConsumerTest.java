@@ -7,6 +7,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.nio.charset.Charset;
+
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -28,144 +30,152 @@ import com.tibco.tibrv.TibrvMsg;
 public class RendezvousConsumerTest extends ConsumerCase {
 
   private static final String BASE_DIR_KEY = "TibrvConsumerExamples.baseDir";
-	private static String CHAR_ENC_KEY = "char-enc";
-	private static String CHAR_ENC_VAL = "char-enc-val";
-	private static String PAYLOAD_KEY = "payload";
-	private static String PAYLOAD_VAL = "payload-val";
-	private static String UNIQUE_ID_KEY = "unique-id";
-	private static String UNIQUE_ID_VAL = "unique-id-val";
-	private static String METADATA_KEY = "metadata";
-	private static String DESTINATION = "over-there";
-	private static String DESTINATION_THREAD = "Fred";
+  private static String CHAR_ENC_KEY = "char-enc";
+  private static String CHAR_ENC_VAL = Charset.defaultCharset().name();
+  private static String PAYLOAD_KEY = "payload";
+  private static String PAYLOAD_VAL = "payload-val";
+  private static String UNIQUE_ID_KEY = "unique-id";
+  private static String UNIQUE_ID_VAL = "unique-id-val";
+  private static String METADATA_KEY = "metadata";
+  private static String DESTINATION = "over-there";
+  private static String DESTINATION_THREAD = "Fred";
 
-	private TibrvMsg tibrvMsg;
-	@Mock private TibrvListener listener;
-	@Mock private TibrvException exception;
-	@Mock private AdaptrisMessageListener adaptrisListener;
-	@Mock private AdaptrisMessage adaptrisMsg;
-	@Mock private ConsumeDestination destination;
+  private TibrvMsg tibrvMsg;
+  @Mock
+  private TibrvListener listener;
+  @Mock
+  private TibrvException exception;
+  @Mock
+  private AdaptrisMessageListener adaptrisListener;
+  @Mock
+  private AdaptrisMessage adaptrisMsg;
+  @Mock
+  private ConsumeDestination destination;
 
-	private RendezvousTranslator translatorSpy;
-	private RendezvousClient clientSpy;
-	private RendezvousConsumer consumer;
+  private RendezvousTranslator translatorSpy;
+  private RendezvousClient clientSpy;
+  private RendezvousConsumer consumer;
 
-	public RendezvousConsumerTest(String name) {
-		super(name);
+  public RendezvousConsumerTest(String name) {
+    super(name);
     if (PROPERTIES.getProperty(BASE_DIR_KEY) != null) {
       setBaseDir(PROPERTIES.getProperty(BASE_DIR_KEY));
     }
-	}
+  }
 
-	@Override
+  @Override
   protected void setUp() throws Exception {
-		MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.initMocks(this);
 
-		consumer = new RendezvousConsumer();
+    consumer = new RendezvousConsumer();
 
-		consumer.registerAdaptrisMessageListener(adaptrisListener);
-		consumer.setDestination(destination);
-		translatorSpy = spy(consumer.getRendezvousTranslator());
-		consumer.setRendezvousTranslator(translatorSpy);
-		clientSpy = spy(consumer.getRendezvousClient());
-		consumer.setRendezvousClient(clientSpy);
+    consumer.registerAdaptrisMessageListener(adaptrisListener);
+    consumer.setDestination(destination);
+    translatorSpy = spy(consumer.getRendezvousTranslator());
+    consumer.setRendezvousTranslator(translatorSpy);
+    clientSpy = spy(consumer.getRendezvousClient());
+    consumer.setRendezvousClient(clientSpy);
 
-		when(destination.getDeliveryThreadName()).thenReturn(DESTINATION_THREAD);
-		when(destination.getDestination()).thenReturn(DESTINATION);
+    when(destination.getDeliveryThreadName()).thenReturn(DESTINATION_THREAD);
+    when(destination.getDestination()).thenReturn(DESTINATION);
 
-		//Some things are easier NOT mocked...
-	    tibrvMsg = new TibrvMsg();
-	    tibrvMsg.setSendSubject("subject");
-	    tibrvMsg.add(PAYLOAD_KEY, PAYLOAD_VAL.getBytes(), TibrvMsg.OPAQUE);
-	    tibrvMsg.add(UNIQUE_ID_KEY, UNIQUE_ID_VAL, TibrvMsg.STRING);
-	    tibrvMsg.add(CHAR_ENC_KEY, CHAR_ENC_VAL, TibrvMsg.STRING);
+    // Some things are easier NOT mocked...
+    tibrvMsg = new TibrvMsg();
+    tibrvMsg.setSendSubject("subject");
+    tibrvMsg.add(PAYLOAD_KEY, PAYLOAD_VAL.getBytes(), TibrvMsg.OPAQUE);
+    tibrvMsg.add(UNIQUE_ID_KEY, UNIQUE_ID_VAL, TibrvMsg.STRING);
+    tibrvMsg.add(CHAR_ENC_KEY, CHAR_ENC_VAL, TibrvMsg.STRING);
 
-	    TibrvMsg metadata = new TibrvMsg();
-	    metadata.add("key", "val", TibrvMsg.STRING);
-	    metadata.add("key2", "val", TibrvMsg.STRING);
+    TibrvMsg metadata = new TibrvMsg();
+    metadata.add("key", "val", TibrvMsg.STRING);
+    metadata.add("key2", "val", TibrvMsg.STRING);
 
-	    tibrvMsg.add(METADATA_KEY, metadata, TibrvMsg.MSG);
-	}
+    tibrvMsg.add(METADATA_KEY, metadata, TibrvMsg.MSG);
+  }
 
-	public void testInit() throws Exception{
-		doNothing().when(clientSpy).init();
-		doNothing().when(clientSpy).createMessageListener(consumer, DESTINATION);
+  public void testInit() throws Exception {
+    doNothing().when(clientSpy).init();
+    doNothing().when(clientSpy).createMessageListener(consumer, DESTINATION);
 
     LifecycleHelper.init(consumer);
 
-		verify(clientSpy).init();
-		verify(clientSpy).createMessageListener(consumer, DESTINATION);
+    verify(clientSpy).init();
+    verify(clientSpy).createMessageListener(consumer, DESTINATION);
 
-		doThrow(exception).when(clientSpy).init();
-		consumer.changeState(ClosedState.getInstance()); // reset the state to allow for init to fire again.
-		try{
+    doThrow(exception).when(clientSpy).init();
+    consumer.changeState(ClosedState.getInstance()); // reset the state to allow for init to fire again.
+    try {
       LifecycleHelper.init(consumer);
-			fail("No CoreException thrown for .init() fail");
-		}
-		catch(CoreException e){}
-	}
-	/**
-	 * tibrv message should be translated and then appropriate adaptrisListener
-	 * called
-	 *
-	 * @throws Exception
-	 */
-	public void testOnMsg() throws Exception {
-		when(translatorSpy.translate(tibrvMsg)).thenReturn(adaptrisMsg);
+      fail("No CoreException thrown for .init() fail");
+    } catch (CoreException e) {
+    }
+  }
 
-		consumer.onMsg(listener, tibrvMsg);
+  /**
+   * tibrv message should be translated and then appropriate adaptrisListener
+   * called
+   *
+   * @throws Exception
+   */
+  public void testOnMsg() throws Exception {
+    when(translatorSpy.translate(tibrvMsg)).thenReturn(adaptrisMsg);
 
-		verify(translatorSpy, times(2)).translate(tibrvMsg);
-		verify(adaptrisListener).onAdaptrisMessage(adaptrisMsg);
-	}
+    consumer.onMsg(listener, tibrvMsg);
 
-	/**
-	 * Process should complete without exception
-	 *
-	 * @throws Exception
-	 */
-	public void testOnMsgNull() throws Exception {
-		consumer.onMsg(listener, null);
-	}
+    verify(translatorSpy, times(2)).translate(tibrvMsg);
+    verify(adaptrisListener).onAdaptrisMessage(adaptrisMsg);
+  }
 
-	public void testStartStopClose() throws Exception{
-		doNothing().when(clientSpy).start();
-		doNothing().when(clientSpy).stop();
-		doNothing().when(clientSpy).close();
+  /**
+   * Process should complete without exception
+   *
+   * @throws Exception
+   */
+  public void testOnMsgNull() throws Exception {
+    consumer.onMsg(listener, null);
+  }
 
-		consumer.changeState(InitialisedState.getInstance());
-		
+  public void testStartStopClose() throws Exception {
+    doNothing().when(clientSpy).start();
+    doNothing().when(clientSpy).stop();
+    doNothing().when(clientSpy).close();
+
+    consumer.changeState(InitialisedState.getInstance());
+
     LifecycleHelper.start(consumer);
-		verify(clientSpy).start();
+    verify(clientSpy).start();
 
     LifecycleHelper.stop(consumer);
-		verify(clientSpy).stop();
+    verify(clientSpy).stop();
 
     LifecycleHelper.close(consumer);
-		verify(clientSpy).close();
+    verify(clientSpy).close();
 
-		//Also need to test when TibrvException raised on .start()
-		//However StandardRendezvousClient doesn't throw that exception
-	}
-	public void testSetNull() throws Exception{
-		try{
-			consumer.setRendezvousClient(null);
-			fail("no error for null RendezvousClient");
-		}
-		catch(Exception e){}
-		try{
-			consumer.setRendezvousTranslator(null);
-			fail("no error for null RendezvousTranslator");
-		}
-		catch(Exception e){}
-	}
-	@Override
+    // Also need to test when TibrvException raised on .start()
+    // However StandardRendezvousClient doesn't throw that exception
+  }
+
+  public void testSetNull() throws Exception {
+    try {
+      consumer.setRendezvousClient(null);
+      fail("no error for null RendezvousClient");
+    } catch (Exception e) {
+    }
+    try {
+      consumer.setRendezvousTranslator(null);
+      fail("no error for null RendezvousTranslator");
+    } catch (Exception e) {
+    }
+  }
+
+  @Override
   protected Object retrieveObjectForSampleConfig() {
-		RendezvousConsumer consumer = new RendezvousConsumer();
-		consumer.setDestination(new ConfiguredConsumeDestination("consume"));
+    RendezvousConsumer consumer = new RendezvousConsumer();
+    consumer.setDestination(new ConfiguredConsumeDestination("consume"));
 
-		StandaloneConsumer result = new StandaloneConsumer();
-		result.setConsumer(consumer);
+    StandaloneConsumer result = new StandaloneConsumer();
+    result.setConsumer(consumer);
 
-		return result;
-	}
+    return result;
+  }
 }
