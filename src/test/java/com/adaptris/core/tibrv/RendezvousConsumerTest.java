@@ -1,17 +1,17 @@
 package com.adaptris.core.tibrv;
 
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import java.nio.charset.Charset;
-
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageListener;
 import com.adaptris.core.ClosedState;
@@ -56,15 +56,17 @@ public class RendezvousConsumerTest extends ConsumerCase {
   private RendezvousClient clientSpy;
   private RendezvousConsumer consumer;
 
-  public RendezvousConsumerTest(String name) {
-    super(name);
+  public RendezvousConsumerTest() {
     if (PROPERTIES.getProperty(BASE_DIR_KEY) != null) {
       setBaseDir(PROPERTIES.getProperty(BASE_DIR_KEY));
     }
   }
-
   @Override
-  protected void setUp() throws Exception {
+  public boolean isAnnotatedForJunit4() {
+    return true;
+  }
+  @Before
+  public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
 
     consumer = new RendezvousConsumer();
@@ -93,6 +95,7 @@ public class RendezvousConsumerTest extends ConsumerCase {
     tibrvMsg.add(METADATA_KEY, metadata, TibrvMsg.MSG);
   }
 
+  @Test
   public void testInit() throws Exception {
     doNothing().when(clientSpy).init();
     doNothing().when(clientSpy).createMessageListener(consumer, DESTINATION);
@@ -117,6 +120,7 @@ public class RendezvousConsumerTest extends ConsumerCase {
    *
    * @throws Exception
    */
+  @Test
   public void testOnMsg() throws Exception {
     when(translatorSpy.translate(tibrvMsg)).thenReturn(adaptrisMsg);
 
@@ -131,10 +135,12 @@ public class RendezvousConsumerTest extends ConsumerCase {
    *
    * @throws Exception
    */
+  @Test
   public void testOnMsgNull() throws Exception {
     consumer.onMsg(listener, null);
   }
 
+  @Test
   public void testStartStopClose() throws Exception {
     doNothing().when(clientSpy).start();
     doNothing().when(clientSpy).stop();
@@ -155,6 +161,7 @@ public class RendezvousConsumerTest extends ConsumerCase {
     // However StandardRendezvousClient doesn't throw that exception
   }
 
+  @Test
   public void testSetNull() throws Exception {
     try {
       consumer.setRendezvousClient(null);

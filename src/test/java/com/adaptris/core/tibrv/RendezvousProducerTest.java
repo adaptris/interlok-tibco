@@ -1,17 +1,17 @@
 package com.adaptris.core.tibrv;
 
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import java.nio.charset.Charset;
-
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ConfiguredProduceDestination;
@@ -50,15 +50,17 @@ public class RendezvousProducerTest extends ProducerCase {
 
   private static final String BASE_DIR_KEY = "TibrvProducerExamples.baseDir";
 
-  public RendezvousProducerTest(String name) {
-    super(name);
+  public RendezvousProducerTest() {
     if (PROPERTIES.getProperty(BASE_DIR_KEY) != null) {
       setBaseDir(PROPERTIES.getProperty(BASE_DIR_KEY));
     }
   }
-
   @Override
-  protected void setUp() throws Exception {
+  public boolean isAnnotatedForJunit4() {
+    return true;
+  }
+  @Before
+  public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
 
     producer = new RendezvousProducer();
@@ -76,6 +78,7 @@ public class RendezvousProducerTest extends ProducerCase {
     when(destination.getDestination(adaptrisMsg)).thenReturn(DESTINATION);
   }
 
+  @Test
   public void testInit() throws Exception {
     doNothing().when(clientSpy).init();
     doNothing().when(clientSpy).createConfirmationListener(producer);
@@ -93,6 +96,7 @@ public class RendezvousProducerTest extends ProducerCase {
     }
   }
 
+  @Test
   public void testStartStopClose() throws Exception {
     doNothing().when(clientSpy).start();
     doNothing().when(clientSpy).stop();
@@ -111,6 +115,7 @@ public class RendezvousProducerTest extends ProducerCase {
     // However StandardRendezvousClient doesn't throw that exception
   }
 
+  @Test
   public void testSetNull() throws Exception {
     try {
       producer.setRendezvousClient(null);
@@ -129,6 +134,7 @@ public class RendezvousProducerTest extends ProducerCase {
    *
    * @throws Exception
    */
+  @Test
   public void testOnMsg() throws Exception {
     producer.onMsg(listener, msg);
   }
@@ -138,6 +144,7 @@ public class RendezvousProducerTest extends ProducerCase {
    *
    * @throws Exception
    */
+  @Test
   public void testOnMsgNull() throws Exception {
     producer.onMsg(listener, null);
   }
@@ -147,12 +154,14 @@ public class RendezvousProducerTest extends ProducerCase {
    *
    * @throws Exception
    */
+  @Test
   public void testOnMsgError() throws Exception {
     doThrow(exception).when(msg).get("seqno");
 
     producer.onMsg(listener, msg);
   }
 
+  @Test
   public void testProduce() throws Exception {
     when(translatorSpy.translate(adaptrisMsg, DESTINATION)).thenReturn(msg);
     doNothing().when(clientSpy).send(msg);
@@ -163,6 +172,7 @@ public class RendezvousProducerTest extends ProducerCase {
     verify(clientSpy).send(msg);
   }
 
+  @Test
   public void testProduceWithError() throws Exception {
     when(translatorSpy.translate(adaptrisMsg, DESTINATION)).thenReturn(msg);
     doThrow(exception).when(clientSpy).send(msg);
