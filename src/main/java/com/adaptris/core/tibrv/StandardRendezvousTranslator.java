@@ -14,6 +14,7 @@ import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.AdaptrisMessageTranslator;
 import com.adaptris.core.DefaultMessageFactory;
 import com.adaptris.core.MetadataElement;
+import com.adaptris.interlok.util.Args;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.tibco.tibrv.TibrvMsg;
 import com.tibco.tibrv.TibrvMsgField;
@@ -88,11 +89,8 @@ public class StandardRendezvousTranslator implements RendezvousTranslator {
   @Override
   public TibrvMsg translate(AdaptrisMessage msg, String sendSubject)
       throws Exception {
-
-    if (msg == null || sendSubject == null || "".equals(sendSubject)) {
-      throw new IllegalArgumentException("null or empty param");
-    }
-
+    Args.notNull(msg, "msg");
+    Args.notBlank(sendSubject, "sendSubject");
     TibrvMsg result = new TibrvMsg();
     result.setSendSubject(sendSubject);
     result.add(getUniqueIdName(), msg.getUniqueId(), TibrvMsg.STRING);
