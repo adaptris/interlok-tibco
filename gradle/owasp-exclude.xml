@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+   <suppress>
+      <notes><![CDATA[
+   TIBCO SmartSockets RTserver 6.8.0 and earlier, RTworks before 4.0.4, and Enterprise Message Service (EMS) 4.0.0 through 4.4.1 allows remote attackers to execute arbitrary code via crafted requests containing values that are used as pointer offsets.
+   TIBCO SmartSockets RTserver 6.8.0 and earlier, RTworks before 4.0.4, and Enterprise Message Service (EMS) 4.0.0 through 4.4.1 allows remote attackers to execute arbitrary code via crafted requests containing values that are used as pointers.
+   Buffer overflow in tibemsd in the server in TIBCO Enterprise Message Service (EMS) before 8.3.0 and EMS Appliance before 2.4.0 allows remote authenticated users to cause a denial of service or possibly execute arbitrary code via crafted inbound data.
+
+   Since the jar is optional; this is supplied by the user. so we don't physically care about the CVE for build purposes.
+      ]]></notes>
+      <packageUrl regex="true">^pkg:maven/com\.tibco/tibjms@.*$</packageUrl>
+      <cve>CVE-2007-5655</cve>
+      <cve>CVE-2007-5657</cve>
+      <cve>CVE-2016-3628</cve>
+      <cve>CVE-2018-12415</cve>
+   </suppress>
+</suppressions>
