@@ -7,16 +7,14 @@
 package com.adaptris.core.tibrv;
 
 import java.util.Iterator;
-
 import javax.validation.Valid;
-
-import org.hibernate.validator.constraints.NotBlank;
-
+import javax.validation.constraints.NotBlank;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.AdaptrisMessageTranslator;
 import com.adaptris.core.DefaultMessageFactory;
 import com.adaptris.core.MetadataElement;
+import com.adaptris.interlok.util.Args;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.tibco.tibrv.TibrvMsg;
 import com.tibco.tibrv.TibrvMsgField;
@@ -32,7 +30,7 @@ import com.tibco.tibrv.TibrvMsgField;
  * The names against which these elements are stored / expected to be found in <code>TibrvMsg</code> are configurable and defaulted
  * in the constructor.
  * </p>
- * 
+ *
  * @config tibrv-standard-translator
  */
 @XStreamAlias("tibrv-standard-translator")
@@ -91,11 +89,8 @@ public class StandardRendezvousTranslator implements RendezvousTranslator {
   @Override
   public TibrvMsg translate(AdaptrisMessage msg, String sendSubject)
       throws Exception {
-
-    if (msg == null || sendSubject == null || "".equals(sendSubject)) {
-      throw new IllegalArgumentException("null or empty param");
-    }
-
+    Args.notNull(msg, "msg");
+    Args.notBlank(sendSubject, "sendSubject");
     TibrvMsg result = new TibrvMsg();
     result.setSendSubject(sendSubject);
     result.add(getUniqueIdName(), msg.getUniqueId(), TibrvMsg.STRING);
@@ -113,7 +108,7 @@ public class StandardRendezvousTranslator implements RendezvousTranslator {
       Iterator<MetadataElement> itr = msg.getMetadata().iterator();
 
       while (itr.hasNext()) {
-        MetadataElement m = (MetadataElement) itr.next();
+        MetadataElement m = itr.next();
         metadata.add(m.getKey(), m.getValue(), TibrvMsg.STRING);
       }
 

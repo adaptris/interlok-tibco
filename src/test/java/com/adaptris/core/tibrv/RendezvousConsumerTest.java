@@ -15,8 +15,6 @@ import org.mockito.MockitoAnnotations;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageListener;
 import com.adaptris.core.ClosedState;
-import com.adaptris.core.ConfiguredConsumeDestination;
-import com.adaptris.core.ConsumeDestination;
 import com.adaptris.core.ConsumerCase;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.InitialisedState;
@@ -49,8 +47,6 @@ public class RendezvousConsumerTest extends ConsumerCase {
   private AdaptrisMessageListener adaptrisListener;
   @Mock
   private AdaptrisMessage adaptrisMsg;
-  @Mock
-  private ConsumeDestination destination;
 
   private RendezvousTranslator translatorSpy;
   private RendezvousClient clientSpy;
@@ -72,14 +68,11 @@ public class RendezvousConsumerTest extends ConsumerCase {
     consumer = new RendezvousConsumer();
 
     consumer.registerAdaptrisMessageListener(adaptrisListener);
-    consumer.setDestination(destination);
+    consumer.setSubject(DESTINATION);
     translatorSpy = spy(consumer.getRendezvousTranslator());
     consumer.setRendezvousTranslator(translatorSpy);
     clientSpy = spy(consumer.getRendezvousClient());
     consumer.setRendezvousClient(clientSpy);
-
-    when(destination.getDeliveryThreadName()).thenReturn(DESTINATION_THREAD);
-    when(destination.getDestination()).thenReturn(DESTINATION);
 
     // Some things are easier NOT mocked...
     tibrvMsg = new TibrvMsg();
@@ -178,7 +171,8 @@ public class RendezvousConsumerTest extends ConsumerCase {
   @Override
   protected Object retrieveObjectForSampleConfig() {
     RendezvousConsumer consumer = new RendezvousConsumer();
-    consumer.setDestination(new ConfiguredConsumeDestination("consume"));
+
+    consumer.setSubject("subject");
 
     StandaloneConsumer result = new StandaloneConsumer();
     result.setConsumer(consumer);

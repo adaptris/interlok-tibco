@@ -8,10 +8,12 @@ package com.adaptris.core.tibrv;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.AutoPopulated;
 import com.adaptris.annotation.ComponentProfile;
+import com.adaptris.annotation.DisplayOrder;
+import com.adaptris.annotation.InputFieldHint;
+import com.adaptris.annotation.Removal;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.CoreException;
@@ -23,6 +25,9 @@ import com.adaptris.core.licensing.License;
 import com.adaptris.core.licensing.License.LicenseType;
 import com.adaptris.core.licensing.LicenseChecker;
 import com.adaptris.core.licensing.LicensedComponent;
+import com.adaptris.core.util.DestinationHelper;
+import com.adaptris.core.util.LoggingHelper;
+import com.adaptris.interlok.util.Args;
 import com.adaptris.tibrv.RendezvousClient;
 import com.adaptris.tibrv.StandardRendezvousClient;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -30,6 +35,9 @@ import com.tibco.tibrv.TibrvException;
 import com.tibco.tibrv.TibrvListener;
 import com.tibco.tibrv.TibrvMsg;
 import com.tibco.tibrv.TibrvMsgCallback;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 
 /**
  * <p>
@@ -39,35 +47,55 @@ import com.tibco.tibrv.TibrvMsgCallback;
  * Implements <code>TibrvMsgCallback</code> to handle confirmation messages which are received if this class is used in conjunction
  * with <code>CertifiedRendezvousClient</code>.
  * </p>
- * 
+ *
  * @config tibrv-rendezvous-producer
  * @license ENTERPRISE
  */
 @XStreamAlias("tibrv-rendezvous-producer")
 @AdapterComponent
 @ComponentProfile(summary = "Send messages to Tibco Rendezvous", tag = "producer,tibco", recommended = {NullConnection.class})
+@DisplayOrder(order = {"subject", "rendezvousClient", "rendezvousTranslator"})
 public class RendezvousProducer extends ProduceOnlyProducerImp
  implements TibrvMsgCallback, LicensedComponent {
 
-  // persistent
   @NotNull
-  @AutoPopulated
   @Valid
+  @AutoPopulated
+  @NonNull
+  @Getter
+  @Setter
   private RendezvousClient rendezvousClient;
   @NotNull
   @AutoPopulated
   @Valid
+  @NonNull
+  @Getter
+  @Setter
   private RendezvousTranslator rendezvousTranslator;
 
   /**
-   * <p>
-   * Creates a new instance. Defaults to new
-   * <code>StandardRendezvousClient</code> and
-   * <code>StandardRendezvousTranslator</code>.
-   * </p>
-   * @see StandardRendezvousClient
-   * @see StandardRendezvousTranslator
+   * The destination is the Tibrv Subject
+   *
    */
+  @Getter
+  @Setter
+  @Deprecated
+  @Valid
+  @Removal(version = "4.0.0", message = "Use 'subject' instead")
+  private ProduceDestination destination;
+
+  /**
+   * The Subject
+   *
+   */
+  @InputFieldHint(expression = true)
+  @Getter
+  @Setter
+  // Needs to be @NotBlank when destination is removed.
+  private String subject;
+
+  private transient boolean destWarning;
+
   public RendezvousProducer() {
     setRendezvousClient(new StandardRendezvousClient());
     setRendezvousTranslator(new StandardRendezvousTranslator());
@@ -75,6 +103,11 @@ public class RendezvousProducer extends ProduceOnlyProducerImp
 
   @Override
   public final void prepare() throws CoreException {
+    DestinationHelper.logWarningIfNotNull(destWarning, () -> destWarning = true, getDestination(),
+        "{} uses destination, use 'subject' instead", LoggingHelper.friendlyName(this));
+    DestinationHelper.mustHaveEither(getSubject(), getDestination());
+    Args.notNull(getRendezvousClient(), "rendezvousClient");
+    Args.notNull(getRendezvousTranslator(), "rendezvousTranslator");
     LicenseChecker.newChecker().checkLicense(this);
   }
 
@@ -84,13 +117,13 @@ public class RendezvousProducer extends ProduceOnlyProducerImp
   }
 
 
-  /** @see com.adaptris.core.AdaptrisComponent#init() */
   @Override
   public void init() throws CoreException {
     try {
-      rendezvousClient.init();
-      rendezvousTranslator.registerMessageFactory(AdaptrisMessageFactory.defaultIfNull(getMessageFactory()));
-      rendezvousClient.createConfirmationListener(this);
+      getRendezvousClient().init();
+      getRendezvousTranslator()
+          .registerMessageFactory(AdaptrisMessageFactory.defaultIfNull(getMessageFactory()));
+      getRendezvousClient().createConfirmationListener(this);
     }
     catch (TibrvException e) {
       throw new CoreException(e);
@@ -98,139 +131,50 @@ public class RendezvousProducer extends ProduceOnlyProducerImp
   }
 
 
-  /** @see com.adaptris.core.AdaptrisComponent#start() */
   @Override
   public void start() throws CoreException {
     try {
-      rendezvousClient.start();
+      getRendezvousClient().start();
     }
     catch (TibrvException e) {
       throw new CoreException(e);
     }
   }
 
-  /** @see com.adaptris.core.AdaptrisComponent#stop() */
   @Override
   public void stop() {
-    rendezvousClient.stop();
+    getRendezvousClient().stop();
   }
 
-  /** @see com.adaptris.core.AdaptrisComponent#close() */
   @Override
   public void close() {
-    rendezvousClient.close();
+    getRendezvousClient().close();
   }
 
-  /** @see com.tibco.tibrv.TibrvMsgCallback#onMsg
-   *   (com.tibco.tibrv.TibrvListener, com.tibco.tibrv.TibrvMsg) */
   @Override
   public void onMsg(TibrvListener listner, TibrvMsg tibrvMsg) {
     try {
-      log.debug("received conf [" + tibrvMsg.get("seqno") + "]");
+      log.debug("received conf [{}]", tibrvMsg.get("seqno"));
     }
-    catch (NullPointerException e){
-      log.warn("", e);
-    }
-    catch (TibrvException e) {
+    catch (Exception e) {
       log.warn("", e);
     }
   }
 
-  /** @see com.adaptris.core.AdaptrisMessageProducerImp#toString() */
   @Override
-  public String toString() {
-    StringBuffer result = new StringBuffer(super.toString());
-    result.append(" ");
-    result.append(getRendezvousClient());
-    result.append(" ");
-    result.append(getRendezvousTranslator());
-
-    return result.toString();
-  }
-
-  /**
-   * @see com.adaptris.core.AdaptrisMessageProducer
-   *   #produce(com.adaptris.core.AdaptrisMessage,
-   *     com.adaptris.core.ProduceDestination)
-   */
-  @Override
-  public void produce(AdaptrisMessage msg, ProduceDestination destination)
-    throws ProduceException {
+  protected void doProduce(AdaptrisMessage msg, String endpoint) throws ProduceException {
     try {
-      rendezvousClient.send(getRendezvousTranslator().translate(msg,
-          destination.getDestination(msg)));
-
-      log.debug("message [" + msg.getUniqueId() + "] sent");
+      rendezvousClient.send(getRendezvousTranslator().translate(msg, endpoint));
+      log.debug("message [{}] sent", msg.getUniqueId());
     }
     catch (Exception e) {
       throw new ProduceException(e);
     }
   }
 
+  @Override
+  public String endpoint(AdaptrisMessage msg) throws ProduceException {
+    return DestinationHelper.resolveProduceDestination(getSubject(), getDestination(), msg);
 
-
-//  public AdaptrisMessage request(AdaptrisMessage msg,
-//    ProduceDestination destination, long timeout) throws ProduceException {
-//
-//    throw new UnsupportedOperationException();
-//
-//    // create inbox for reply...
-//
-//    // set on message...
-//
-//    // block for reply for timeout
-//
-//    // return reply or null if no reply
-//
-//    // destroy inbox tba
-//
-//  }
-
-  // properties...
-
-  /**
-   * <p>
-   * Returns the <code>RendezvousTranslator</code> to use.
-   * </p>
-   * @return the <code>RendezvousTranslator</code> to use
-   */
-  public RendezvousTranslator getRendezvousTranslator() {
-    return rendezvousTranslator;
-  }
-
-  /**
-   * <p>
-   * Sets the the <code>RendezvousTranslator</code> to use.
-   * </p>
-   * @param r the <code>RendezvousTranslator</code> to use
-   */
-  public void setRendezvousTranslator(RendezvousTranslator r) {
-    if (r == null) {
-      throw new IllegalArgumentException("null param");
-    }
-    rendezvousTranslator = r;
-  }
-
-  /**
-   * <p>
-   * Returns the <code>RendezvousClient</code> to use.
-   * </p>
-   * @return the <code>RendezvousClient</code> to use
-   */
-  public RendezvousClient getRendezvousClient() {
-    return rendezvousClient;
-  }
-
-  /**
-   * <p>
-   * Sets the <code>RendezvousClient</code> to use.
-   * </p>
-   * @param r the <code>RendezvousClient</code> to use
-   */
-  public void setRendezvousClient(RendezvousClient r) {
-    if (r == null) {
-      throw new IllegalArgumentException("null param");
-    }
-    rendezvousClient = r;
   }
 }
