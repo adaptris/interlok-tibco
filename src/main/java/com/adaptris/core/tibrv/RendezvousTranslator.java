@@ -22,7 +22,7 @@ public interface RendezvousTranslator extends AdaptrisMessageTranslator {
    * Create a new <code>TibrvMsg</code> based on the passed
    * <code>AdaptrisMessage</code> and <code>sendSubject</code>.
    * </p>
-   * 
+   *
    * @param msg the <code>AdaptrisMessage</code> to translate
    * @param sendSubject the send subject to use
    * @return a new <code>TibrvMsg</code>
@@ -35,10 +35,11 @@ public interface RendezvousTranslator extends AdaptrisMessageTranslator {
    * Create a new <code>AdaptrisMessage</code> based on the passed
    * <code>TibrvMsg</code>.
    * </p>
-   * 
+   *
    * @param tibrvMsg the <code>TibrvMsg</code> to translate
    * @return a new <code>AdaptrisMessage</code>
    * @throws Exception if any occur
    */
   AdaptrisMessage translate(TibrvMsg tibrvMsg) throws Exception;
+
 }

@@ -7,25 +7,30 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
 import java.nio.charset.Charset;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageListener;
 import com.adaptris.core.ClosedState;
-import com.adaptris.core.ConsumerCase;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.InitialisedState;
 import com.adaptris.core.StandaloneConsumer;
 import com.adaptris.core.util.LifecycleHelper;
+import com.adaptris.interlok.junit.scaffolding.ExampleConsumerCase;
+import com.adaptris.interlok.util.Closer;
 import com.adaptris.tibrv.RendezvousClient;
 import com.tibco.tibrv.TibrvException;
 import com.tibco.tibrv.TibrvListener;
 import com.tibco.tibrv.TibrvMsg;
 
-public class RendezvousConsumerTest extends ConsumerCase {
+public class RendezvousConsumerTest extends ExampleConsumerCase {
 
   private static final String BASE_DIR_KEY = "TibrvConsumerExamples.baseDir";
   private static String CHAR_ENC_KEY = "char-enc";
@@ -36,7 +41,6 @@ public class RendezvousConsumerTest extends ConsumerCase {
   private static String UNIQUE_ID_VAL = "unique-id-val";
   private static String METADATA_KEY = "metadata";
   private static String DESTINATION = "over-there";
-  private static String DESTINATION_THREAD = "Fred";
 
   private TibrvMsg tibrvMsg;
   @Mock
@@ -52,18 +56,17 @@ public class RendezvousConsumerTest extends ConsumerCase {
   private RendezvousClient clientSpy;
   private RendezvousConsumer consumer;
 
+  private AutoCloseable openMocks;
+
   public RendezvousConsumerTest() {
     if (PROPERTIES.getProperty(BASE_DIR_KEY) != null) {
       setBaseDir(PROPERTIES.getProperty(BASE_DIR_KEY));
     }
   }
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
+
   @Before
   public void setUp() throws Exception {
-    MockitoAnnotations.initMocks(this);
+    openMocks = MockitoAnnotations.openMocks(this);
 
     consumer = new RendezvousConsumer();
 
@@ -86,6 +89,11 @@ public class RendezvousConsumerTest extends ConsumerCase {
     metadata.add("key2", "val", TibrvMsg.STRING);
 
     tibrvMsg.add(METADATA_KEY, metadata, TibrvMsg.MSG);
+  }
+
+  @After
+  public void tearDown() throws Exception {
+    Closer.closeQuietly(openMocks);
   }
 
   @Test
@@ -179,4 +187,5 @@ public class RendezvousConsumerTest extends ConsumerCase {
 
     return result;
   }
+
 }
