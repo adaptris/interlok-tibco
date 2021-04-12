@@ -7,8 +7,10 @@
 package com.adaptris.core.tibrv;
 
 import java.util.Iterator;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.AdaptrisMessageTranslator;
@@ -281,4 +283,5 @@ public class StandardRendezvousTranslator implements RendezvousTranslator {
     }
     metadataName = s;
   }
+
 }

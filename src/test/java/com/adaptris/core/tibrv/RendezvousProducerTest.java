@@ -7,26 +7,29 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
 import java.nio.charset.Charset;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
-import com.adaptris.core.ConfiguredProduceDestination;
 import com.adaptris.core.CoreException;
-import com.adaptris.core.ProduceDestination;
 import com.adaptris.core.ProduceException;
-import com.adaptris.core.ProducerCase;
 import com.adaptris.core.StandaloneProducer;
 import com.adaptris.core.util.LifecycleHelper;
+import com.adaptris.interlok.junit.scaffolding.ExampleProducerCase;
+import com.adaptris.interlok.util.Closer;
 import com.adaptris.tibrv.RendezvousClient;
 import com.tibco.tibrv.TibrvException;
 import com.tibco.tibrv.TibrvListener;
 import com.tibco.tibrv.TibrvMsg;
 
-public class RendezvousProducerTest extends ProducerCase {
+public class RendezvousProducerTest extends ExampleProducerCase {
 
   private static String CHAR_ENC_VAL = Charset.defaultCharset().name();
   private static String PAYLOAD_VAL = "payload-val";
@@ -40,13 +43,13 @@ public class RendezvousProducerTest extends ProducerCase {
   @Mock
   private TibrvMsg msg;
   @Mock
-  private ProduceDestination destination;
-  @Mock
   private AdaptrisMessage adaptrisMsg;
 
   RendezvousTranslator translatorSpy;
   RendezvousClient clientSpy;
   private RendezvousProducer producer;
+
+  private AutoCloseable openMocks;
 
   private static final String BASE_DIR_KEY = "TibrvProducerExamples.baseDir";
 
@@ -55,27 +58,28 @@ public class RendezvousProducerTest extends ProducerCase {
       setBaseDir(PROPERTIES.getProperty(BASE_DIR_KEY));
     }
   }
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
+
   @Before
   public void setUp() throws Exception {
-    MockitoAnnotations.initMocks(this);
+    openMocks = MockitoAnnotations.openMocks(this);
 
     producer = new RendezvousProducer();
     translatorSpy = spy(producer.getRendezvousTranslator());
     producer.setRendezvousTranslator(translatorSpy);
     clientSpy = spy(producer.getRendezvousClient());
     producer.setRendezvousClient(clientSpy);
+    producer.setSubject(DESTINATION);
 
     adaptrisMsg = AdaptrisMessageFactory.getDefaultInstance().newMessage(PAYLOAD_VAL);
     adaptrisMsg.setUniqueId(UNIQUE_ID_VAL);
     adaptrisMsg.setContentEncoding(CHAR_ENC_VAL);
     adaptrisMsg.addMetadata("key", "val");
     adaptrisMsg.addMetadata("key2", "val");
+  }
 
-    when(destination.getDestination(adaptrisMsg)).thenReturn(DESTINATION);
+  @After
+  public void tearDown() throws Exception {
+    Closer.closeQuietly(openMocks);
   }
 
   @Test
@@ -166,9 +170,9 @@ public class RendezvousProducerTest extends ProducerCase {
     when(translatorSpy.translate(adaptrisMsg, DESTINATION)).thenReturn(msg);
     doNothing().when(clientSpy).send(msg);
 
-    producer.produce(adaptrisMsg, destination);
+    producer.produce(adaptrisMsg);
 
-    verify(translatorSpy, times(2)).translate(adaptrisMsg, destination.getDestination(adaptrisMsg));
+    verify(translatorSpy, times(2)).translate(adaptrisMsg, DESTINATION);
     verify(clientSpy).send(msg);
   }
 
@@ -178,7 +182,7 @@ public class RendezvousProducerTest extends ProducerCase {
     doThrow(exception).when(clientSpy).send(msg);
 
     try {
-      producer.produce(adaptrisMsg, destination);
+      producer.produce(adaptrisMsg);
       fail("No exception produced from .produce() fail");
     } catch (ProduceException e) {
     }
@@ -187,7 +191,7 @@ public class RendezvousProducerTest extends ProducerCase {
   @Override
   protected Object retrieveObjectForSampleConfig() {
     RendezvousProducer producer = new RendezvousProducer();
-    producer.setDestination(new ConfiguredProduceDestination("produce"));
+    producer.setSubject("produce");
 
     StandaloneProducer result = new StandaloneProducer();
     result.setProducer(producer);

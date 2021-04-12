@@ -16,10 +16,10 @@ import com.tibco.tibjms.TibjmsQueueConnectionFactory;
  * <p>
  * <code>BasicTibcoEmsImplementation</code>
  * </p>
- * 
+ *
  * @config basic-tibco-ems-implementation
  * @license BASIC
- * 
+ *
  * @author Aaron - 5 Oct 2012
  */
 @XStreamAlias("basic-tibco-ems-implementation")
@@ -44,4 +44,5 @@ public class BasicTibcoEmsImplementation extends UrlVendorImplementation impleme
   public boolean isEnabled(License license) {
     return license.isEnabled(LicenseType.Basic);
   }
+
 }

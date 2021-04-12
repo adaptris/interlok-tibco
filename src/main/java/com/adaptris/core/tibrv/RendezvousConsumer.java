@@ -7,15 +7,15 @@
 package com.adaptris.core.tibrv;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.AutoPopulated;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.DisplayOrder;
-import com.adaptris.validation.constraints.ConfigDeprecated;
 import com.adaptris.core.AdaptrisMessageConsumerImp;
 import com.adaptris.core.AdaptrisMessageFactory;
-import com.adaptris.core.ConsumeDestination;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.NullConnection;
 import com.adaptris.core.licensing.License;
@@ -23,7 +23,6 @@ import com.adaptris.core.licensing.License.LicenseType;
 import com.adaptris.core.licensing.LicenseChecker;
 import com.adaptris.core.licensing.LicensedComponent;
 import com.adaptris.core.util.DestinationHelper;
-import com.adaptris.core.util.LoggingHelper;
 import com.adaptris.interlok.util.Args;
 import com.adaptris.tibrv.RendezvousClient;
 import com.adaptris.tibrv.StandardRendezvousClient;
@@ -32,6 +31,7 @@ import com.tibco.tibrv.TibrvException;
 import com.tibco.tibrv.TibrvListener;
 import com.tibco.tibrv.TibrvMsg;
 import com.tibco.tibrv.TibrvMsgCallback;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -48,7 +48,7 @@ import lombok.Setter;
 @ComponentProfile(summary = "Receive messages from Tibco Rendezvous", tag = "consumer,tibco", recommended = {NullConnection.class})
 @DisplayOrder(order = {"subject"})
 public class RendezvousConsumer extends AdaptrisMessageConsumerImp
- implements TibrvMsgCallback, LicensedComponent {
+implements TibrvMsgCallback, LicensedComponent {
 
   // persistent
   @NotNull
@@ -61,26 +61,13 @@ public class RendezvousConsumer extends AdaptrisMessageConsumerImp
   private RendezvousTranslator rendezvousTranslator;
 
   /**
-   * The consume destination contains the subject we are consuming from.
+   * The Subject we are consuming from.
    *
    */
   @Getter
   @Setter
-  @Deprecated
-  @Valid
-  @ConfigDeprecated(removalVersion = "4.0.0", message = "Use 'base-directory-url' instead", groups = Deprecated.class)
-  private ConsumeDestination destination;
-
-  /**
-   * The Subject
-   *
-   */
-  @Getter
-  @Setter
-  // Needs to be @NotBlank when destination is removed.
+  @NotBlank
   private String subject;
-
-  private transient boolean destinationWarningLogged;
 
   /**
    * <p>
@@ -98,10 +85,7 @@ public class RendezvousConsumer extends AdaptrisMessageConsumerImp
 
   @Override
   public final void prepare() throws CoreException {
-    DestinationHelper.logConsumeDestinationWarning(destinationWarningLogged,
-        () -> destinationWarningLogged = true, getDestination(),
-        "{} uses destination, subject instead", LoggingHelper.friendlyName(this));
-    DestinationHelper.mustHaveEither(getSubject(), getDestination());
+    Args.notNull(getSubject(), "subject");
     LicenseChecker.newChecker().checkLicense(this);
   }
 
@@ -110,8 +94,6 @@ public class RendezvousConsumer extends AdaptrisMessageConsumerImp
     return license.isEnabled(LicenseType.Enterprise);
   }
 
-
-
   /** @see com.adaptris.core.AdaptrisComponent#init() */
   @Override
   public void init() throws CoreException {
@@ -119,8 +101,7 @@ public class RendezvousConsumer extends AdaptrisMessageConsumerImp
       rendezvousClient.init();
       getRendezvousTranslator().registerMessageFactory(AdaptrisMessageFactory.defaultIfNull(getMessageFactory()));
       rendezvousClient.createMessageListener(this, subject());
-    }
-    catch (TibrvException e) {
+    } catch (TibrvException e) {
       throw new CoreException(e);
     }
   }
@@ -135,12 +116,11 @@ public class RendezvousConsumer extends AdaptrisMessageConsumerImp
       long start = System.currentTimeMillis();
 
       retrieveAdaptrisMessageListener().onAdaptrisMessage
-        (getRendezvousTranslator().translate(tibrvMsg));
+      (getRendezvousTranslator().translate(tibrvMsg));
 
       log.trace("time to process 1 message ["
-        + (System.currentTimeMillis() - start) + "] ms");
-    }
-    catch (Exception e) {
+          + (System.currentTimeMillis() - start) + "] ms");
+    } catch (Exception e) {
       log.error("exception receiving message" + e);
     }
   }
@@ -150,8 +130,7 @@ public class RendezvousConsumer extends AdaptrisMessageConsumerImp
   public void start() throws CoreException {
     try {
       rendezvousClient.start();
-    }
-    catch (TibrvException e) {
+    } catch (TibrvException e) {
       throw new CoreException(e);
     }
   }
@@ -208,13 +187,13 @@ public class RendezvousConsumer extends AdaptrisMessageConsumerImp
     rendezvousClient = Args.notNull(r, "rendezvous-client");
   }
 
-
   protected String subject() {
-    return DestinationHelper.consumeDestination(getSubject(), getDestination());
+    return getSubject();
   }
 
   @Override
   protected String newThreadName() {
-    return DestinationHelper.threadName(retrieveAdaptrisMessageListener(), getDestination());
+    return DestinationHelper.threadName(retrieveAdaptrisMessageListener());
   }
+
 }
