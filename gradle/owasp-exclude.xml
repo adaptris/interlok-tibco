@@ -5,6 +5,7 @@
    TIBCO SmartSockets RTserver 6.8.0 and earlier, RTworks before 4.0.4, and Enterprise Message Service (EMS) 4.0.0 through 4.4.1 allows remote attackers to execute arbitrary code via crafted requests containing values that are used as pointer offsets.
    TIBCO SmartSockets RTserver 6.8.0 and earlier, RTworks before 4.0.4, and Enterprise Message Service (EMS) 4.0.0 through 4.4.1 allows remote attackers to execute arbitrary code via crafted requests containing values that are used as pointers.
    Buffer overflow in tibemsd in the server in TIBCO Enterprise Message Service (EMS) before 8.3.0 and EMS Appliance before 2.4.0 allows remote authenticated users to cause a denial of service or possibly execute arbitrary code via crafted inbound data.
+   The Windows Installation component of TIBCO Software Inc.'s TIBCO Enterprise Message Service, TIBCO Enterprise Message Service - Community Edition, and TIBCO Enterprise Message Service - Developer Edition contains a vulnerability that theoretically allows a low privileged attacker with local access on some versions of the Windows operating system to insert malicious software. The affected component can be abused to execute the malicious software inserted by the attacker with the elevated privileges of the component. This vulnerability results from a lack of access restrictions on certain files and/or folders in the installation. Affected releases are TIBCO Software Inc.'s TIBCO Enterprise Message Service: versions 8.5.1 and below, TIBCO Enterprise Message Service - Community Edition: versions 8.5.1 and below, and TIBCO Enterprise Message Service - Developer Edition: versions 8.5.1 and below.
 
    Since the jar is optional; this is supplied by the user. so we don't physically care about the CVE for build purposes.
       ]]></notes>
@@ -13,5 +14,7 @@
       <cve>CVE-2007-5657</cve>
       <cve>CVE-2016-3628</cve>
       <cve>CVE-2018-12415</cve>
+	  <cve>CVE-2021-28821</cve>
+	  <cve>CVE-2021-28822</cve>
    </suppress>
 </suppressions>
