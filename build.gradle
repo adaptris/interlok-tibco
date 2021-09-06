@@ -2,27 +2,27 @@ import org.apache.tools.ant.taskdefs.condition.Os
 import org.apache.tools.ant.filters.*
 
 plugins {
-  id 'java'
-  id 'maven'
+  id 'java-library'
   id 'maven-publish'
   id 'jacoco'
   // Manage optional dependencies in maven pom.
   id 'nebula.optional-base' version '4.0.1'
-  id 'com.github.spotbugs' version '4.7.1'
-  id 'org.owasp.dependencycheck' version '6.2.0'
+  id 'com.github.spotbugs' version '4.7.2'
+  id 'org.owasp.dependencycheck' version '6.2.2'
   id "io.freefair.lombok" version "5.3.3.3"
 }
 
 ext {
-  interlokCoreVersion = project.hasProperty('interlokCoreVersion') ? project.getProperty('interlokCoreVersion') : '4.1-SNAPSHOT'
-  releaseVersion = project.hasProperty('releaseVersion') ? project.getProperty('releaseVersion') : '4.1-SNAPSHOT'
-  nexusBaseUrl = project.hasProperty('nexusBaseUrl') ? project.getProperty('nexusBaseUrl') : 'https://nexus.adaptris.net/nexus'
-  mavenPublishUrl = project.hasProperty('mavenPublishUrl') ? project.getProperty('mavenPublishUrl') : nexusBaseUrl + '/content/repositories/snapshots'
+  interlokCoreVersion = project.findProperty('interlokCoreVersion') ?: '4.2-SNAPSHOT'
+  releaseVersion = project.findProperty('releaseVersion') ?: '4.2-SNAPSHOT'
+  nexusBaseUrl = project.findProperty('nexusBaseUrl') ?: 'https://nexus.adaptris.net/nexus'
+  mavenPublishUrl = project.findProperty('mavenPublishUrl') ?: nexusBaseUrl + '/content/repositories/snapshots'
   javadocsBaseUrl = nexusBaseUrl + "/content/sites/javadocs/com/adaptris"
-  repoUsername = project.hasProperty('repoUsername') ? project.getProperty('repoUsername') : 'unknown'
-  repoPassword = project.hasProperty('repoPassword') ? project.getProperty('repoPassword') : 'unknown'
-  defaultNexusRepo = project.hasProperty('defaultNexusRepo') ? project.getProperty('defaultNexusRepo') : 'https://repo1.maven.org/maven2/'
+  repoUsername = project.findProperty('repoUsername') ?: 'unknown'
+  repoPassword = project.findProperty('repoPassword') ?: 'unknown'
+  defaultNexusRepo = project.findProperty('defaultNexusRepo') ?: 'unknown'
   offlineJavadocPackageDir = new File(project.buildDir, "offline-javadoc-packages")
+
   delombokTargetDir = new File("${project.projectDir}/src/main/generated")
 
   interlokJavadocs= project.hasProperty('interlokJavadocs') ? project.getProperty('interlokJavadocs') : javadocsBaseUrl + "/interlok-core/" + interlokCoreVersion
@@ -32,52 +32,26 @@ ext {
   componentDesc="Using Tibco as as messaging platform"
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
-  slf4jVersion = '1.7.30'
-  mockitoVersion = '3.11.0'
+  slf4jVersion = '1.7.32'
+  mockitoVersion = '3.11.2'
 }
 
-if (JavaVersion.current().isJava8Compatible()) {
-  allprojects {
-    tasks.withType(Javadoc) {
-      options.addStringOption('Xdoclint:none', '-quiet')
+ext.buildUtil = [
+  hostname: { ->
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+      return System.getenv("COMPUTERNAME")
     }
-  }
-}
+    return System.getenv("HOSTNAME")
+  },
 
-ext.hostname = { ->
-  if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-    return System.getenv("COMPUTERNAME")
-  }
-  return System.getenv("HOSTNAME")
-}
+  gitBranchNameOrTimestamp: { branchName ->
+    if (branchName.equals("HEAD") || branchName.equals("develop") || branchName.startsWith("release")) {
+      return new Date().format('HH:mm:ss z');
+    }
+    return branchName;
+  },
 
-ext.unitTestProperties = { ->
-  def file = new File("src/test/resources", "unit-tests.properties.template." + hostname())
-  if (file.exists()) {
-    return file.getName()
-  }
-  return  "unit-tests.properties.template"
-}
-
-ext.hasGraphViz = { ->
-//  def app = "dot"
-//  if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-//    app = app + ".exe"
-//  }
-//  return System.getenv("PATH").split(File.pathSeparator).any{
-//    java.nio.file.Paths.get("${it}").resolve(app).toFile().exists()
-//  }
-  return false
-}
-
-ext.gitBranchNameOrTimestamp = { branchName ->
-  if (branchName.equals("HEAD") || branchName.equals("develop") || branchName.startsWith("release")) {
-    return new Date().format('HH:mm:ss z');
-  }
-  return branchName;
-}
-
-ext.buildInfo = { ->
+  buildInfo: { ->
    new ByteArrayOutputStream().withStream { os ->
       exec {
         executable = "git"
@@ -85,10 +59,41 @@ ext.buildInfo = { ->
         standardOutput = os
       }
       def branchName = os.toString().replaceAll("\r", "").replaceAll("\n", "").trim();
-      return gitBranchNameOrTimestamp(branchName);
+      return buildUtil.gitBranchNameOrTimestamp(branchName);
     }
-}
+  },
+  hasGraphViz: { ->
+//  def app = "dot"
+//  if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+//    app = app + ".exe"
+//  }
+//  return System.getenv("PATH").split(File.pathSeparator).any{
+//    java.nio.file.Paths.get("${it}").resolve(app).toFile().exists()
+//  }
+    return false
+  },
 
+  is_ci_pipeline: { ->
+    return System.getenv().containsKey("CI");
+  },
+
+  testResourcesDir: { ->
+    return "${project.projectDir}/src/test/resources".replaceAll("\\\\", "/")
+  },
+
+  propertyTemplate: { dir, filename ->
+    def file = new File(dir, filename + "." + buildUtil.hostname())
+    if (file.exists()) {
+      return file.getName()
+    }
+    return filename
+  },
+
+  unitTestTemplate: {
+    return buildUtil.propertyTemplate(buildUtil.testResourcesDir(), "unit-tests.properties.template")
+  }
+
+]
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 group   = 'com.adaptris'
@@ -96,18 +101,29 @@ version = releaseVersion
 def versionDir = "$buildDir/version"
 generateLombokConfig.enabled = false
 
+// Disable gradle module generation since we probably don't want
+// xxx.module files in your repository.
+tasks.withType(GenerateModuleMetadata) {
+  enabled = false
+}
+
 repositories {
   mavenCentral()
-  maven { url "$defaultNexusRepo" }
-  maven {
-      credentials {
-        username repoUsername
-        password repoPassword
-      }
-      url "$nexusBaseUrl/content/groups/private"
+  if (defaultNexusRepo != "unknown") {
+    maven {
+      url "$defaultNexusRepo"
+      allowInsecureProtocol true
     }
+  }
   maven { url "$nexusBaseUrl/content/groups/public" }
   maven { url "$nexusBaseUrl/content/groups/interlok" }
+  maven {
+    credentials {
+      username repoUsername
+      password repoPassword
+    }
+    url "$nexusBaseUrl/content/groups/private"
+  }
 }
 
 
@@ -140,24 +156,21 @@ configurations.all {
 }
 
 dependencies {
-  compile ("com.adaptris:interlok-core:$interlokCoreVersion") { changing= true}
-  compile ("com.adaptris:interlok-common:$interlokCoreVersion") { changing= true}
-  compile ("com.adaptris:interlok-licensing:$interlokCoreVersion") { changing= true}
-  compile ("org.slf4j:slf4j-api:$slf4jVersion")
-  compile "com.tibco:tibjms:6.3.0", optional
-  compile "com.tibco:tibrv:7.5.1", optional
+  api ("com.adaptris:interlok-core:$interlokCoreVersion") { changing= true}
+  api ("com.adaptris:interlok-common:$interlokCoreVersion") { changing= true}
+  implementation ("com.adaptris:interlok-licensing:$interlokCoreVersion") { changing= true}
+  implementation ("org.slf4j:slf4j-api:$slf4jVersion")
+  implementation "com.tibco:tibjms:6.3.0", optional
+  implementation "com.tibco:tibrv:7.5.1", optional
 
   annotationProcessor ("com.adaptris:interlok-core-apt:$interlokCoreVersion") {changing= true}
-  testCompile ('junit:junit:4.13.2')
-  testCompile "org.slf4j:slf4j-simple:$slf4jVersion"
-  // exclude any log4j dependencies so that we can just use slf4j simple.
-  // works around INTERLOk-3233
-  testCompile "com.adaptris:interlok-stubs:$interlokCoreVersion", {
-    changing= true
-    exclude group: "org.apache.logging.log4j"
-  }
-  testCompile ("org.mockito:mockito-core:$mockitoVersion")
-  testCompile ("org.mockito:mockito-inline:$mockitoVersion")
+
+  testImplementation ('junit:junit:4.13.2')
+  testImplementation ("org.slf4j:slf4j-simple:$slf4jVersion")
+  testImplementation ("com.adaptris:interlok-stubs:$interlokCoreVersion") { changing= true }
+  testImplementation ("org.mockito:mockito-core:$mockitoVersion")
+  testImplementation ("org.mockito:mockito-inline:$mockitoVersion")
+
   javadoc("com.adaptris:interlok-core-apt:$interlokCoreVersion") { changing= true}
   offlineJavadocPackages ("com.adaptris:interlok-core:$interlokCoreVersion:javadoc@jar") { changing= true}
   offlineJavadocPackages ("com.adaptris:interlok-common:$interlokCoreVersion:javadoc@jar") { changing= true}
@@ -182,16 +195,18 @@ sourceSets {
   }
 }
 
-task copyUnitTestProperties(type: Copy) {
-  delete file('src/test/resources/unit-tests.properties')
-  from file("src/test/resources/" + unitTestProperties())
-  into ('src/test/resources/')
-  rename { String fileName ->
-    fileName.replace(unitTestProperties(), 'unit-tests.properties')
+task copyUnitTestProperties() {
+  doLast {
+    delete file(buildUtil.testResourcesDir() + "/unit-tests.properties")
+    ant.copy(file: buildUtil.testResourcesDir() + "/" + buildUtil.unitTestTemplate(),
+             tofile: buildUtil.testResourcesDir() + '/unit-tests.properties') {
+      filterset {
+         filter(token: "JAVA_HOME", value: System.getProperty("java.home").replaceAll("\\\\", "/"))
+         filter(token: "BASE_DIR", value: project.projectDir.getCanonicalPath().replaceAll("\\\\", "/"))
+         filter(token: "BUILD_DIR", value: project.buildDir.getCanonicalPath().replaceAll("\\\\", "/"))
+      }
+    }
   }
-  filter(ReplaceTokens, tokens: [JAVA_HOME: System.getProperty("java.home").replaceAll("\\\\", "/")])
-  filter(ReplaceTokens, tokens: [BASE_DIR: project.rootDir.getCanonicalPath().replaceAll("\\\\", "/")])
-  filter(ReplaceTokens, tokens: [BUILD_DIR: project.buildDir.getCanonicalPath().replaceAll("\\\\", "/")])
 }
 
 task deleteUnitTestProperties(type: Delete) {
@@ -210,12 +225,15 @@ task generateVersion {
       entry(key: 'artifactId', value: project.name)
       entry(key: 'build.version', value: project.version)
       entry(key: 'build.date', value: new Date().format('yyyy-MM-dd'))
-      entry(key: 'build.info', value: buildInfo())
+      entry(key: 'build.info', value: buildUtil.buildInfo())
     }
   }
 }
 
 javadoc {
+  onlyIf {
+    !buildUtil.hasGraphViz()
+  }
   configure(options) {
     options.linksOffline(interlokJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-core-$interlokCoreVersion-javadoc.jar")
     options.linksOffline(interlokCommonJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-common-$interlokCoreVersion-javadoc.jar")
@@ -223,6 +241,7 @@ javadoc {
     taglets = ["com.adaptris.taglet.ConfigTaglet", "com.adaptris.taglet.LicenseTaglet"]
     options.addStringOption "tagletpath", configurations.javadoc.asPath
     options.addBooleanOption "-no-module-directories", true
+    options.addStringOption('Xdoclint:none', '-quiet')
     title= componentName
   }
 }
@@ -248,7 +267,7 @@ task umlJavadoc(type: Javadoc) {
   description 'Build javadocs using plantuml + graphviz + umldoclet, if dot is available'
 
   onlyIf {
-    hasGraphViz()
+    buildUtil.hasGraphViz()
   }
   source = sourceSets.main.extensions.delombokTask
   classpath = project.sourceSets.main.compileClasspath
@@ -260,6 +279,7 @@ task umlJavadoc(type: Javadoc) {
     taglets = ["com.adaptris.taglet.ConfigTaglet", "com.adaptris.taglet.LicenseTaglet"]
     options.addStringOption "tagletpath", configurations.javadoc.asPath
     options.addBooleanOption "-no-module-directories", true
+    options.addStringOption('Xdoclint:none', '-quiet')
     options.docletpath = configurations.umlDoclet.files.asType(List)
     options.doclet = "nl.talsmasoftware.umldoclet.UMLDoclet"
     options.addStringOption "umlBasePath", destinationDir.getCanonicalPath()
@@ -283,8 +303,8 @@ task umlJavadoc(type: Javadoc) {
 
 jacocoTestReport {
     reports {
-        xml.enabled true
-        html.enabled true
+        xml.required= true
+        html.required= true
     }
 }
 
@@ -342,7 +362,7 @@ task lgtmCompile(type: JavaCompile, dependsOn: delombok) {
   description 'Compile for lgtm'
 
   source = sourceSets.main.extensions.delombokTask
-  destinationDir = sourceSets.main.java.outputDir
+  destinationDirectory= sourceSets.main.java.classesDirectory
   classpath = project.sourceSets.main.compileClasspath
 }
 
@@ -372,7 +392,7 @@ spotbugsMain {
 
 dependencyCheck  {
   suppressionFiles= [ "https://raw.githubusercontent.com/adaptris/interlok/develop/gradle/owasp-exclude.xml" , "$rootDir/gradle/owasp-exclude.xml" ]
-  skipConfigurations = [ "antSql", "spotbugs", "umlDoclet", "offlineJavadocPackages", "javadoc", "jacocoAnt", "jacocoAgent", "spotbugsPlugins", "spotbugsSlf4j" ]
+  scanConfigurations = [ "api", "compileClasspath", "runtimeClasspath" ]
   formats = [ "HTML", "JUNIT" ]
   junitFailOnCVSS = 7.0
   failBuildOnCVSS = 7.0
