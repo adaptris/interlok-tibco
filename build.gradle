@@ -32,7 +32,7 @@ ext {
   componentDesc="Using Tibco as as messaging platform"
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
-  slf4jVersion = '1.7.35'
+  slf4jVersion = '1.7.36'
   mockitoVersion = '4.3.1'
 }
 
