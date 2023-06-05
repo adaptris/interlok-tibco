@@ -43,8 +43,8 @@ import lombok.Setter;
  * Implementation of <code>AdaptrisMessageProducee</code> which handles Tibco Rendezvous messages.
  * </p>
  * <p>
- * Implements <code>TibrvMsgCallback</code> to handle confirmation messages which are received if this class is used in conjunction
- * with <code>CertifiedRendezvousClient</code>.
+ * Implements <code>TibrvMsgCallback</code> to handle confirmation messages which are received if this class is used in conjunction with
+ * <code>CertifiedRendezvousClient</code>.
  * </p>
  *
  * @config tibrv-rendezvous-producer
@@ -52,10 +52,9 @@ import lombok.Setter;
  */
 @XStreamAlias("tibrv-rendezvous-producer")
 @AdapterComponent
-@ComponentProfile(summary = "Send messages to Tibco Rendezvous", tag = "producer,tibco", recommended = {NullConnection.class})
-@DisplayOrder(order = {"subject", "rendezvousClient", "rendezvousTranslator"})
-public class RendezvousProducer extends ProduceOnlyProducerImp
-implements TibrvMsgCallback, LicensedComponent {
+@ComponentProfile(summary = "Send messages to Tibco Rendezvous", tag = "producer,tibco", recommended = { NullConnection.class })
+@DisplayOrder(order = { "subject", "rendezvousClient", "rendezvousTranslator" })
+public class RendezvousProducer extends ProduceOnlyProducerImp implements TibrvMsgCallback, LicensedComponent {
 
   @NotNull
   @Valid
@@ -104,8 +103,7 @@ implements TibrvMsgCallback, LicensedComponent {
   public void init() throws CoreException {
     try {
       getRendezvousClient().init();
-      getRendezvousTranslator()
-      .registerMessageFactory(AdaptrisMessageFactory.defaultIfNull(getMessageFactory()));
+      getRendezvousTranslator().registerMessageFactory(AdaptrisMessageFactory.defaultIfNull(getMessageFactory()));
       getRendezvousClient().createConfirmationListener(this);
     } catch (TibrvException e) {
       throw new CoreException(e);
@@ -154,4 +152,5 @@ implements TibrvMsgCallback, LicensedComponent {
   public String endpoint(AdaptrisMessage msg) throws ProduceException {
     return msg.resolve(getSubject());
   }
+
 }
