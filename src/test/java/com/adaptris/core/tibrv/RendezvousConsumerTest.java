@@ -1,6 +1,6 @@
 package com.adaptris.core.tibrv;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
@@ -10,9 +10,9 @@ import static org.mockito.Mockito.when;
 
 import java.nio.charset.Charset;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -64,7 +64,7 @@ public class RendezvousConsumerTest extends ExampleConsumerCase {
     }
   }
 
-  @Before
+  @BeforeEach
   public void setUp() throws Exception {
     openMocks = MockitoAnnotations.openMocks(this);
 
@@ -91,7 +91,7 @@ public class RendezvousConsumerTest extends ExampleConsumerCase {
     tibrvMsg.add(METADATA_KEY, metadata, TibrvMsg.MSG);
   }
 
-  @After
+  @AfterEach
   public void tearDown() throws Exception {
     Closer.closeQuietly(openMocks);
   }
@@ -184,7 +184,6 @@ public class RendezvousConsumerTest extends ExampleConsumerCase {
 
     StandaloneConsumer result = new StandaloneConsumer();
     result.setConsumer(consumer);
-
     return result;
   }
 
