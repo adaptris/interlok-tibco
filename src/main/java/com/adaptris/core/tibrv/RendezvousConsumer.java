@@ -45,10 +45,9 @@ import lombok.Setter;
  */
 @XStreamAlias("tibrv-rendezvous-consumer")
 @AdapterComponent
-@ComponentProfile(summary = "Receive messages from Tibco Rendezvous", tag = "consumer,tibco", recommended = {NullConnection.class})
-@DisplayOrder(order = {"subject"})
-public class RendezvousConsumer extends AdaptrisMessageConsumerImp
-implements TibrvMsgCallback, LicensedComponent {
+@ComponentProfile(summary = "Receive messages from Tibco Rendezvous", tag = "consumer,tibco", recommended = { NullConnection.class })
+@DisplayOrder(order = { "subject" })
+public class RendezvousConsumer extends AdaptrisMessageConsumerImp implements TibrvMsgCallback, LicensedComponent {
 
   // persistent
   @NotNull
@@ -71,8 +70,7 @@ implements TibrvMsgCallback, LicensedComponent {
 
   /**
    * <p>
-   * Creates a new instance. Defaults to new <code>StandardRendezvousClient</code> and
-   * <code>StandardRendezvousTranslator</code>.
+   * Creates a new instance. Defaults to new <code>StandardRendezvousClient</code> and <code>StandardRendezvousTranslator</code>.
    * </p>
    *
    * @see StandardRendezvousClient
@@ -106,8 +104,9 @@ implements TibrvMsgCallback, LicensedComponent {
     }
   }
 
-  /** @see com.tibco.tibrv.TibrvMsgCallback
-   *   #onMsg(com.tibco.tibrv.TibrvListener, com.tibco.tibrv.TibrvMsg) */
+  /**
+   * @see com.tibco.tibrv.TibrvMsgCallback #onMsg(com.tibco.tibrv.TibrvListener, com.tibco.tibrv.TibrvMsg)
+   */
   @Override
   public void onMsg(TibrvListener listener, TibrvMsg tibrvMsg) {
     renameThread();
@@ -115,11 +114,9 @@ implements TibrvMsgCallback, LicensedComponent {
     try {
       long start = System.currentTimeMillis();
 
-      retrieveAdaptrisMessageListener().onAdaptrisMessage
-      (getRendezvousTranslator().translate(tibrvMsg));
+      retrieveAdaptrisMessageListener().onAdaptrisMessage(getRendezvousTranslator().translate(tibrvMsg));
 
-      log.trace("time to process 1 message ["
-          + (System.currentTimeMillis() - start) + "] ms");
+      log.trace("time to process 1 message [" + (System.currentTimeMillis() - start) + "] ms");
     } catch (Exception e) {
       log.error("exception receiving message" + e);
     }
@@ -151,6 +148,7 @@ implements TibrvMsgCallback, LicensedComponent {
    * <p>
    * Returns the <code>RendezvousTranslator</code> to use.
    * </p>
+   *
    * @return the <code>RendezvousTranslator</code> to use
    */
   public RendezvousTranslator getRendezvousTranslator() {
@@ -161,7 +159,9 @@ implements TibrvMsgCallback, LicensedComponent {
    * <p>
    * Sets the the <code>RendezvousTranslator</code> to use.
    * </p>
-   * @param r the <code>RendezvousTranslator</code> to use
+   *
+   * @param r
+   *          the <code>RendezvousTranslator</code> to use
    */
   public void setRendezvousTranslator(RendezvousTranslator r) {
     rendezvousTranslator = Args.notNull(r, "rendezvous-translator");
@@ -171,6 +171,7 @@ implements TibrvMsgCallback, LicensedComponent {
    * <p>
    * Returns the <code>RendezvousClient</code> to use.
    * </p>
+   *
    * @return the <code>RendezvousClient</code> to use
    */
   public RendezvousClient getRendezvousClient() {
@@ -181,7 +182,9 @@ implements TibrvMsgCallback, LicensedComponent {
    * <p>
    * Sets the <code>RendezvousClient</code> to use.
    * </p>
-   * @param r the <code>RendezvousClient</code> to use
+   *
+   * @param r
+   *          the <code>RendezvousClient</code> to use
    */
   public void setRendezvousClient(RendezvousClient r) {
     rendezvousClient = Args.notNull(r, "rendezvous-client");

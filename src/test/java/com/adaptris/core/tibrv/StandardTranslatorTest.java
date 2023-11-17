@@ -6,8 +6,16 @@
  */
 package com.adaptris.core.tibrv;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.nio.charset.Charset;
 import java.util.Arrays;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
@@ -15,9 +23,7 @@ import com.adaptris.core.DefaultMessageFactory;
 import com.tibco.tibrv.Tibrv;
 import com.tibco.tibrv.TibrvMsg;
 
-import junit.framework.TestCase;
-
-public class StandardTranslatorTest extends TestCase {
+public class StandardTranslatorTest {
 
   private static String CHAR_ENC_KEY = "char-enc";
   private static String CHAR_ENC_VAL = Charset.defaultCharset().name();
@@ -29,17 +35,14 @@ public class StandardTranslatorTest extends TestCase {
 
   private StandardRendezvousTranslator translator;
 
-  public StandardTranslatorTest(String name) {
-    super(name);
-  }
-
-  @Override
+  @BeforeEach
   protected void setUp() throws Exception {
     translator = new StandardRendezvousTranslator();
     translator.registerMessageFactory(new DefaultMessageFactory());
     Tibrv.open(Tibrv.IMPL_JAVA); // doesn't need rvd...
   }
 
+  @Test
   public void testAdaptrisToTibrvWithoutMetadata() throws Exception {
     TibrvMsg expected = new TibrvMsg();
     expected.add(PAYLOAD_KEY, PAYLOAD_VAL.getBytes());
@@ -61,6 +64,7 @@ public class StandardTranslatorTest extends TestCase {
     assertEquals(expected.get(CHAR_ENC_KEY), result.get(CHAR_ENC_KEY));
   }
 
+  @Test
   public void testAdaptrisToTibrvWithMetadata() throws Exception {
     TibrvMsg expected = new TibrvMsg();
     expected.setSendSubject("subject");
@@ -89,10 +93,10 @@ public class StandardTranslatorTest extends TestCase {
 
     assertEquals("val", ((TibrvMsg) result.get(METADATA_KEY)).get("key"));
     assertEquals("val", ((TibrvMsg) result.get(METADATA_KEY)).get("key2"));
-
     assertEquals(2, ((TibrvMsg) result.get(METADATA_KEY)).getNumFields());
   }
 
+  @Test
   public void testTibrvToAdaptrisWithoutMetadata() throws Exception {
     AdaptrisMessage expected = AdaptrisMessageFactory.getDefaultInstance().newMessage(PAYLOAD_VAL);
     expected.setUniqueId(UNIQUE_ID_VAL);
@@ -111,6 +115,7 @@ public class StandardTranslatorTest extends TestCase {
     assertEquals(expected.getContentEncoding(), result.getContentEncoding());
   }
 
+  @Test
   public void testTibrvToAdaptrisWithMetadata() throws Exception {
     AdaptrisMessage expected = AdaptrisMessageFactory.getDefaultInstance().newMessage(PAYLOAD_VAL);
     expected.setUniqueId(UNIQUE_ID_VAL);
@@ -138,12 +143,11 @@ public class StandardTranslatorTest extends TestCase {
     assertEquals(expected.getContentEncoding(), result.getContentEncoding());
 
     assertEquals(expected.getMetadataValue("key"), result.getMetadataValue("key"));
-
     assertEquals(expected.getMetadataValue("key2"), result.getMetadataValue("key2"));
-
     assertEquals(2, result.getMetadata().size());
   }
 
+  @Test
   public void testAdaptrisToTibrvWithNoPayloadOrCharEnc() throws Exception {
     TibrvMsg expected = new TibrvMsg();
     expected.setSendSubject("subject");
@@ -170,10 +174,10 @@ public class StandardTranslatorTest extends TestCase {
 
     assertEquals("val", ((TibrvMsg) result.get(METADATA_KEY)).get("key"));
     assertEquals("val", ((TibrvMsg) result.get(METADATA_KEY)).get("key2"));
-
     assertEquals(2, ((TibrvMsg) result.get(METADATA_KEY)).getNumFields());
   }
 
+  @Test
   public void testTibrvToAdaptrisWithNoPayloadOrCharEnc() throws Exception {
     AdaptrisMessage expected = AdaptrisMessageFactory.getDefaultInstance().newMessage();
     expected.setUniqueId(UNIQUE_ID_VAL);
@@ -199,12 +203,11 @@ public class StandardTranslatorTest extends TestCase {
     assertNull(result.getContentEncoding());
 
     assertEquals(expected.getMetadataValue("key"), result.getMetadataValue("key"));
-
     assertEquals(expected.getMetadataValue("key2"), result.getMetadataValue("key2"));
-
     assertEquals(2, result.getMetadata().size());
   }
 
+  @Test
   public void testTranslateNull() throws Exception {
     try {
       translator.translate(null, "Null Test");
@@ -231,6 +234,7 @@ public class StandardTranslatorTest extends TestCase {
     }
   }
 
+  @Test
   public void testSetNull() throws Exception {
     try {
       translator.setCharEncName(null);
@@ -255,6 +259,6 @@ public class StandardTranslatorTest extends TestCase {
       fail("No IllegalArgumentException for .setUniqueIdName(null)");
     } catch (IllegalArgumentException e) {
     }
-
   }
+
 }
