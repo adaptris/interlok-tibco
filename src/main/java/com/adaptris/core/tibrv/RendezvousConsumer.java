@@ -18,10 +18,6 @@ import com.adaptris.core.AdaptrisMessageConsumerImp;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.NullConnection;
-import com.adaptris.core.licensing.License;
-import com.adaptris.core.licensing.License.LicenseType;
-import com.adaptris.core.licensing.LicenseChecker;
-import com.adaptris.core.licensing.LicensedComponent;
 import com.adaptris.core.util.DestinationHelper;
 import com.adaptris.interlok.util.Args;
 import com.adaptris.tibrv.RendezvousClient;
@@ -39,15 +35,12 @@ import lombok.Setter;
  * <p>
  * Implementation of <code>AdaptrisMessageConsumer</code> which handles Tibco Rendezvous messages.
  * </p>
- *
- * @config tibrv-rendezvous-consumer
- * @license ENTERPRISE
  */
 @XStreamAlias("tibrv-rendezvous-consumer")
 @AdapterComponent
 @ComponentProfile(summary = "Receive messages from Tibco Rendezvous", tag = "consumer,tibco", recommended = { NullConnection.class })
 @DisplayOrder(order = { "subject" })
-public class RendezvousConsumer extends AdaptrisMessageConsumerImp implements TibrvMsgCallback, LicensedComponent {
+public class RendezvousConsumer extends AdaptrisMessageConsumerImp implements TibrvMsgCallback {
 
   // persistent
   @NotNull
@@ -84,12 +77,6 @@ public class RendezvousConsumer extends AdaptrisMessageConsumerImp implements Ti
   @Override
   public final void prepare() throws CoreException {
     Args.notNull(getSubject(), "subject");
-    LicenseChecker.newChecker().checkLicense(this);
-  }
-
-  @Override
-  public boolean isEnabled(License license) {
-    return license.isEnabled(LicenseType.Enterprise);
   }
 
   /** @see com.adaptris.core.AdaptrisComponent#init() */

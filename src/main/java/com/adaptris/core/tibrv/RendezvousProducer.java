@@ -21,10 +21,6 @@ import com.adaptris.core.CoreException;
 import com.adaptris.core.NullConnection;
 import com.adaptris.core.ProduceException;
 import com.adaptris.core.ProduceOnlyProducerImp;
-import com.adaptris.core.licensing.License;
-import com.adaptris.core.licensing.License.LicenseType;
-import com.adaptris.core.licensing.LicenseChecker;
-import com.adaptris.core.licensing.LicensedComponent;
 import com.adaptris.interlok.util.Args;
 import com.adaptris.tibrv.RendezvousClient;
 import com.adaptris.tibrv.StandardRendezvousClient;
@@ -46,15 +42,12 @@ import lombok.Setter;
  * Implements <code>TibrvMsgCallback</code> to handle confirmation messages which are received if this class is used in conjunction with
  * <code>CertifiedRendezvousClient</code>.
  * </p>
- *
- * @config tibrv-rendezvous-producer
- * @license ENTERPRISE
  */
 @XStreamAlias("tibrv-rendezvous-producer")
 @AdapterComponent
 @ComponentProfile(summary = "Send messages to Tibco Rendezvous", tag = "producer,tibco", recommended = { NullConnection.class })
 @DisplayOrder(order = { "subject", "rendezvousClient", "rendezvousTranslator" })
-public class RendezvousProducer extends ProduceOnlyProducerImp implements TibrvMsgCallback, LicensedComponent {
+public class RendezvousProducer extends ProduceOnlyProducerImp implements TibrvMsgCallback {
 
   @NotNull
   @Valid
@@ -91,12 +84,6 @@ public class RendezvousProducer extends ProduceOnlyProducerImp implements TibrvM
     Args.notNull(getSubject(), "subject");
     Args.notNull(getRendezvousClient(), "rendezvousClient");
     Args.notNull(getRendezvousTranslator(), "rendezvousTranslator");
-    LicenseChecker.newChecker().checkLicense(this);
-  }
-
-  @Override
-  public boolean isEnabled(License license) {
-    return license.isEnabled(LicenseType.Enterprise);
   }
 
   @Override
