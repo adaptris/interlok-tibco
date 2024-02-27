@@ -27,7 +27,6 @@ ext {
 
   interlokJavadocs= project.hasProperty('interlokJavadocs') ? project.getProperty('interlokJavadocs') : javadocsBaseUrl + "/interlok-core/" + interlokCoreVersion
   interlokCommonJavadocs= project.hasProperty('interlokCommonJavadocs') ? project.getProperty('interlokCommonJavadocs') : javadocsBaseUrl + "/interlok-common/" + interlokCoreVersion
-  interlokLicenseJavadocs= project.hasProperty('interlokLicenseJavadocs') ? project.getProperty('interlokLicenseJavadocs') : javadocsBaseUrl + "/interlok-licensing/" + interlokCoreVersion
   componentName='Interlok Messaging/Tibco'
   componentDesc="Using Tibco as as messaging platform"
   organizationName = "Adaptris Ltd"
@@ -160,8 +159,8 @@ dependencies {
   api ("com.adaptris:interlok-common:$interlokCoreVersion") { changing= true}
   implementation ("com.adaptris:interlok-licensing:$interlokCoreVersion") { changing= true}
   implementation ("org.slf4j:slf4j-api:$slf4jVersion")
-  implementation "com.tibco:tibjms:6.3.0", optional
-  implementation "com.tibco:tibrv:7.5.1", optional
+  implementation "com.tibco:tibjms:10.2", optional
+  implementation "com.tibco:tibrv:8.7", optional
 
   annotationProcessor ("com.adaptris:interlok-core-apt:$interlokCoreVersion") {changing= true}
 
@@ -236,7 +235,6 @@ javadoc {
   configure(options) {
     options.linksOffline(interlokJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-core-$interlokCoreVersion-javadoc.jar")
     options.linksOffline(interlokCommonJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-common-$interlokCoreVersion-javadoc.jar")
-    options.linksOffline(interlokLicenseJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-licensing-$interlokCoreVersion-javadoc.jar")
     taglets = ["com.adaptris.taglet.ConfigTaglet", "com.adaptris.taglet.LicenseTaglet"]
     options.addStringOption "tagletpath", configurations.javadoc.asPath
     options.addStringOption "Xdoclint:none", "-quiet"
@@ -270,7 +268,6 @@ task umlJavadoc(type: Javadoc) {
   configure(options) {
     options.linksOffline(interlokJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-core-$interlokCoreVersion-javadoc.jar")
     options.linksOffline(interlokCommonJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-common-$interlokCoreVersion-javadoc.jar")
-    options.linksOffline(interlokLicenseJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-licensing-$interlokCoreVersion-javadoc.jar")
 
     taglets = ["com.adaptris.taglet.ConfigTaglet", "com.adaptris.taglet.LicenseTaglet"]
     options.addStringOption "tagletpath", configurations.javadoc.asPath
@@ -324,7 +321,8 @@ publishing {
         def properties = asNode().appendNode("properties")
         properties.appendNode("target", "3.8.0+")
         properties.appendNode("tags", "tibco,jms")
-        properties.appendNode("license", "true")
+        properties.appendNode("license", "false")
+        properties.appendNode("repository", "https://github.com/adaptris/interlok-tibco")
       }
     }
   }

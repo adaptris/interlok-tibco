@@ -9,3 +9,9 @@
 [![Closed PRs](https://img.shields.io/github/issues-pr-closed/adaptris/interlok-tibco)](https://github.com/adaptris/interlok-tibco/pulls?q=is%3Apr+is%3Aclosed)
 
 Tibco integration for Interlok.
+
+To get the Interlok Tibco working you will require `com.tibco:tibjms:10.2` and `com.tibco:tibrv:8.7` jars in the Interlok lib directory.
+
+These two jars are part of Tibco Enterprise Message Service which is a licensed software.
+
+Later versions of these two jars may also work but haven't been tested.
