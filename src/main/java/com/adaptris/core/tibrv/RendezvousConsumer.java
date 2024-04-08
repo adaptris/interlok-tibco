@@ -18,10 +18,6 @@ import com.adaptris.core.AdaptrisMessageConsumerImp;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.NullConnection;
-import com.adaptris.core.licensing.License;
-import com.adaptris.core.licensing.License.LicenseType;
-import com.adaptris.core.licensing.LicenseChecker;
-import com.adaptris.core.licensing.LicensedComponent;
 import com.adaptris.core.util.DestinationHelper;
 import com.adaptris.interlok.util.Args;
 import com.adaptris.tibrv.RendezvousClient;
@@ -39,16 +35,12 @@ import lombok.Setter;
  * <p>
  * Implementation of <code>AdaptrisMessageConsumer</code> which handles Tibco Rendezvous messages.
  * </p>
- *
- * @config tibrv-rendezvous-consumer
- * @license ENTERPRISE
  */
 @XStreamAlias("tibrv-rendezvous-consumer")
 @AdapterComponent
-@ComponentProfile(summary = "Receive messages from Tibco Rendezvous", tag = "consumer,tibco", recommended = {NullConnection.class})
-@DisplayOrder(order = {"subject"})
-public class RendezvousConsumer extends AdaptrisMessageConsumerImp
-implements TibrvMsgCallback, LicensedComponent {
+@ComponentProfile(summary = "Receive messages from Tibco Rendezvous", tag = "consumer,tibco", recommended = { NullConnection.class })
+@DisplayOrder(order = { "subject" })
+public class RendezvousConsumer extends AdaptrisMessageConsumerImp implements TibrvMsgCallback {
 
   // persistent
   @NotNull
@@ -71,8 +63,7 @@ implements TibrvMsgCallback, LicensedComponent {
 
   /**
    * <p>
-   * Creates a new instance. Defaults to new <code>StandardRendezvousClient</code> and
-   * <code>StandardRendezvousTranslator</code>.
+   * Creates a new instance. Defaults to new <code>StandardRendezvousClient</code> and <code>StandardRendezvousTranslator</code>.
    * </p>
    *
    * @see StandardRendezvousClient
@@ -86,12 +77,6 @@ implements TibrvMsgCallback, LicensedComponent {
   @Override
   public final void prepare() throws CoreException {
     Args.notNull(getSubject(), "subject");
-    LicenseChecker.newChecker().checkLicense(this);
-  }
-
-  @Override
-  public boolean isEnabled(License license) {
-    return license.isEnabled(LicenseType.Enterprise);
   }
 
   /** @see com.adaptris.core.AdaptrisComponent#init() */
@@ -106,8 +91,9 @@ implements TibrvMsgCallback, LicensedComponent {
     }
   }
 
-  /** @see com.tibco.tibrv.TibrvMsgCallback
-   *   #onMsg(com.tibco.tibrv.TibrvListener, com.tibco.tibrv.TibrvMsg) */
+  /**
+   * @see com.tibco.tibrv.TibrvMsgCallback #onMsg(com.tibco.tibrv.TibrvListener, com.tibco.tibrv.TibrvMsg)
+   */
   @Override
   public void onMsg(TibrvListener listener, TibrvMsg tibrvMsg) {
     renameThread();
@@ -115,11 +101,9 @@ implements TibrvMsgCallback, LicensedComponent {
     try {
       long start = System.currentTimeMillis();
 
-      retrieveAdaptrisMessageListener().onAdaptrisMessage
-      (getRendezvousTranslator().translate(tibrvMsg));
+      retrieveAdaptrisMessageListener().onAdaptrisMessage(getRendezvousTranslator().translate(tibrvMsg));
 
-      log.trace("time to process 1 message ["
-          + (System.currentTimeMillis() - start) + "] ms");
+      log.trace("time to process 1 message [" + (System.currentTimeMillis() - start) + "] ms");
     } catch (Exception e) {
       log.error("exception receiving message" + e);
     }
@@ -151,6 +135,7 @@ implements TibrvMsgCallback, LicensedComponent {
    * <p>
    * Returns the <code>RendezvousTranslator</code> to use.
    * </p>
+   *
    * @return the <code>RendezvousTranslator</code> to use
    */
   public RendezvousTranslator getRendezvousTranslator() {
@@ -161,7 +146,9 @@ implements TibrvMsgCallback, LicensedComponent {
    * <p>
    * Sets the the <code>RendezvousTranslator</code> to use.
    * </p>
-   * @param r the <code>RendezvousTranslator</code> to use
+   *
+   * @param r
+   *          the <code>RendezvousTranslator</code> to use
    */
   public void setRendezvousTranslator(RendezvousTranslator r) {
     rendezvousTranslator = Args.notNull(r, "rendezvous-translator");
@@ -171,6 +158,7 @@ implements TibrvMsgCallback, LicensedComponent {
    * <p>
    * Returns the <code>RendezvousClient</code> to use.
    * </p>
+   *
    * @return the <code>RendezvousClient</code> to use
    */
   public RendezvousClient getRendezvousClient() {
@@ -181,7 +169,9 @@ implements TibrvMsgCallback, LicensedComponent {
    * <p>
    * Sets the <code>RendezvousClient</code> to use.
    * </p>
-   * @param r the <code>RendezvousClient</code> to use
+   *
+   * @param r
+   *          the <code>RendezvousClient</code> to use
    */
   public void setRendezvousClient(RendezvousClient r) {
     rendezvousClient = Args.notNull(r, "rendezvous-client");
